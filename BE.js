@@ -1,11 +1,11 @@
 // ==UserScript==
-// @name           Barefoot Essentials
-// @namespace      http://userscripts.org/users/274735
+// @name           Barefoot Essentials Fork
+// @namespace      https://github.com/DawEdhel/Barefoot-Essentials-Fork
 // @description    Adds many enhancemnts to the GOG.com website
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2
+// @version        3.0.2a
 // @grant          GM.getValue
 // @grant          GM.setValue
 // @grant          GM.xmlHttpRequest
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2'
+var version = '3.0.2a'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the chanelog
 var last_BE_version
 
@@ -528,7 +528,7 @@ config = {
 
 	],
 	"Forums": [
-		{"type": "bool", "def": true, "key": "forum-avatar-zoom", "label": "click on avatars to view at original size"},		{"type": "bool", "def": true, "key": "forum-title-settings", "label": "click on own title to change forum settings"},		{"type": "bool", "def": true, "key": "forum-embed-videos", "label": "Video frames on posts with YouTube video links"},		{"type": "bool", "def": true, "key": "forum-bold-text", "label": "enhanced bold text"},		{"type": "choice", "options": ["square", "rounded corners", "circle"], "def": "square", "key": "forum-avatar-style", "label": "Avatar style"},		{"type": "bool", "def": true, "key": "forum-detect-necro", "label": "Detect \"necroposts\"", "comment": "This option scans forum topics for posts made more than 30 days after the previous post, and visibly labels them."},		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group below other topics", "hide"], "def": "group below other topics", "key": "forum-group-giveaways", "label": "giveaway topics (page refresh required)"},		{"type": "bool", "def": true, "key": "forum-move-edit-note", "label": "restyle \"post edited\" note on edited posts"},		{"type": "bool", "def": false, "key": "forum-move-online-offline-status", "label": "Move online/offline status to its original position"},		{"type": "bool", "def": false, "key": "forum-old-gog-avatar", "label": "Replace the official \"GOG.com\" user's avatar with old green-and-yellow GOG logo"},		{"type": "bool", "def": true, "key": "forum-quick-post", "label": "enable quick post"},		{"type": "choice", "options": ["normal", "distinct", "clear"], "def": "distinct", "key": "forum-quotation-style", "label": "quotation style"},		{"type": "bool", "def": true, "key": "forum-remove-fragment", "label": "Remove the #fragment at the end of topic list URLs"},		{"type": "bool", "def": false, "key": "forum-show-hover-elements", "label": "Always show on-hover elements in forum posts", "comment": "Online/Offline status, PM button, and post link number"},		{"type": "choice", "options": ["None", "Community Wishlist"], "def": "None", "key": "forum-theme", "label": "Custom forum theme", "comment": "Custom themes are still a work-in-progress. Changes the appearance of the forum."},		{"type": "bool", "def": true, "key": "forum-hide-spoilers", "label": "hide spoilers"},		{"type": "bool", "def": true, "key": "forum-post-preview", "label": "preview on post/reply window"},
+		{"type": "bool", "def": true, "key": "forum-avatar-zoom", "label": "click on avatars to view at original size"},		{"type": "bool", "def": true, "key": "forum-title-settings", "label": "click on own title to change forum settings"},		{"type": "bool", "def": true, "key": "forum-embed-videos", "label": "Video frames on posts with YouTube video links"},		{"type": "bool", "def": true, "key": "forum-bold-text", "label": "enhanced bold text"},		{"type": "choice", "options": ["square", "rounded corners", "circle"], "def": "square", "key": "forum-avatar-style", "label": "Avatar style"},		{"type": "bool", "def": true, "key": "forum-detect-necro", "label": "Detect \"necroposts\"", "comment": "This option scans forum topics for posts made more than 30 days after the previous post, and visibly labels them."},		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group below other topics", "hide"], "def": "group and expand", "key": "forum-group-news", "label": "news topics (page refresh required)"},		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group below other topics", "hide"], "def": "group below other topics", "key": "forum-group-giveaways", "label": "giveaway topics (page refresh required)"},		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group below other topics", "hide"], "def": "group below other topics", "key": "forum-group-forumgames", "label": "forum game topics (page refresh required)"},		{"type": "bool", "def": true, "key": "forum-move-edit-note", "label": "restyle \"post edited\" note on edited posts"},		{"type": "bool", "def": false, "key": "forum-move-online-offline-status", "label": "Move online/offline status to its original position"},		{"type": "bool", "def": false, "key": "forum-old-gog-avatar", "label": "Replace the official \"GOG.com\" user's avatar with old green-and-yellow GOG logo"},		{"type": "bool", "def": true, "key": "forum-quick-post", "label": "enable quick post"},		{"type": "choice", "options": ["normal", "distinct", "clear"], "def": "distinct", "key": "forum-quotation-style", "label": "quotation style"},		{"type": "bool", "def": true, "key": "forum-remove-fragment", "label": "Remove the #fragment at the end of topic list URLs"},		{"type": "bool", "def": false, "key": "forum-show-hover-elements", "label": "Always show on-hover elements in forum posts", "comment": "Online/Offline status, PM button, and post link number"},		{"type": "choice", "options": ["None", "Community Wishlist"], "def": "None", "key": "forum-theme", "label": "Custom forum theme", "comment": "Custom themes are still a work-in-progress. Changes the appearance of the forum."},		{"type": "bool", "def": true, "key": "forum-hide-spoilers", "label": "hide spoilers"},		{"type": "bool", "def": true, "key": "forum-post-preview", "label": "preview on post/reply window"},
 	],
 	"Misc": [
 		{"type": "choice", "options": ["light"], "def": "light", "key": "BE-style", "label": "Barefoot Essentials style"},		{"type": "bool", "def": true, "key": "connect-autocheck", "label": "Automatically check for GOG Connect offers"},		{"type": "choice", "options": ["current", "v1", "v2", "v3"], "def": "v1", "key": "favicon", "label": "Favicon"},		{"type": "multibool", "options": {"GOG Database": true, "PCGamingWiki": true, "Wikipedia": true}, "def": "GOG.com", "key": "gamecard-additional-information-links", "label": "Additional information links"},		{"type": "bool", "def": true, "key": "gamecard-show-descriptions", "label": "Automatically expand game and movie descriptions"},
@@ -541,6 +541,14 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2a",
+		"date": "2021-05-20",
+		"changes": [
+			"New feature: Ability to group together \"forum game\" threads on forums.",
+			"New feature: Ability to group together \"news:\" threads on forums.",
+		]
+	},
 	{
 		"version": "3.0.2",
 		"date": "2020-01-05",
@@ -2119,6 +2127,104 @@ function feature_forum_detect_necro() {
 	setTimeout(settings.onchange.bind(settings, 'forum-detect-necro', on_update), 1)
 
 }
+function feature_forum_group_news() {
+
+	function on_update(value) {
+
+		if (value == 'group below other topics') {
+			news_topics.remove().insertAfter($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo(news_topics)
+		} else {
+			news_topics.remove().insertBefore($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo($('#t_norm'))
+		}
+
+		switch (value) {
+			case 'hide':
+				style.text(
+					'.BE-news-topics, .BE-news-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				break
+			case 'group and collapse':
+				style.text(
+					'.BE-news-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-news-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				news_topics.children('.list_row_h').hide()
+				break
+			case 'group and expand':
+			case 'group below other topics':
+				style.text(
+					'.BE-news-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-news-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				news_topics.children('.list_row_h').show()
+				break
+			default:
+				style.text(
+					'.BE-news-topics {'
+					+	'display: none;'
+					+'}'
+					+'.BE-news-topic {'
+					+	'display: block;'
+					+'}'
+				)
+		}
+	}
+
+	var setting = settings.get('forum-group-news')
+	
+	var news_topics = $('<div class="favourite_h BE-news-topics">')
+
+	var list = $('<div class="list_row_h">')
+
+	var news_count = 0
+
+	$('#t_norm').find('div.topic_s>a').each(function() {
+		if (/news:/i.test(this.text)) {
+			var row = $(this).closest('.list_row_odd')
+			row.clone().appendTo(list)
+			row.addClass('BE-news-topic')
+			news_count += 1
+		}
+	})
+
+	if (news_count > 0) {
+
+		var bar = $('<div class="list_bar_h">')
+		.append(
+			$('<div class="lista_icon_3">').attr('style', 'background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADREAAA0RARg5FhkAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuM4zml1AAAAEWSURBVDhPfdC7SoNBEAXg+cHCUrzgK+RB8iKKhCARERTSiHYWCikCpkgRSJPOYCliYyEWgoriC3hB8hLHc342ywozKT427Nk5ycQA2Nxs0xrUodN0NpTxc5O6SbOcqYcZLNGIPmmYCnR+0Te901nyxvOWljU7L9gpL4tftMf7GbWKO33ZlNplQTsoOEgF9eOiRAWdskCtk7TCIK2gUyv80kuxwvO/FXrXFSJ8CFn0xs6vKkR+Ngyy6E291/aJwTNdMUiU5//g6NLgeVgzSJTnguNxBc/HukGiPBd0RxU8rxyWKM8Fh0OD54nDEuW5YH9g8DyuGiTKc8Fu3+C557BEeS5o9QyeOw5LlOeCrQuD54bDEuUq+AOV2hZAAh3hiwAAAABJRU5ErkJggg==") no-repeat scroll 0px 0px transparent'),
+			$('<div class="lista_bar_text">').text("Topics which appear to be news ("+news_count+"	)")
+		)
+		.css('cursor', 'pointer')
+	
+		news_topics
+		.append(bar, list)
+	}
+
+	var style = $('<style>').appendTo(document.head)
+
+	settings.onchange('forum-group-news', on_update)
+
+}
 function feature_forum_group_giveaways() {
 
 	function on_update(value) {
@@ -2191,7 +2297,7 @@ function feature_forum_group_giveaways() {
 	var giveaway_count = 0
 
 	$('#t_norm').find('div.topic_s>a').each(function() {
-		if (/giveaway[^/]*$/.test(this.getAttribute('href'))) {
+		if (/giveaway/i.test(this.text)) {
 			var row = $(this).closest('.list_row_odd')
 			row.clone().appendTo(list)
 			row.addClass('BE-giveaway-topic')
@@ -2215,6 +2321,104 @@ function feature_forum_group_giveaways() {
 	var style = $('<style>').appendTo(document.head)
 
 	settings.onchange('forum-group-giveaways', on_update)
+
+}
+function feature_forum_group_forumgames() {
+
+	function on_update(value) {
+
+		if (value == 'group below other topics') {
+			forumgame_topics.remove().insertAfter($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo(forumgame_topics)
+		} else {
+			forumgame_topics.remove().insertBefore($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo($('#t_norm'))
+		}
+
+		switch (value) {
+			case 'hide':
+				style.text(
+					'.BE-forumgame-topics, .BE-forumgame-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				break
+			case 'group and collapse':
+				style.text(
+					'.BE-forumgame-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-forumgame-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				forumgame_topics.children('.list_row_h').hide()
+				break
+			case 'group and expand':
+			case 'group below other topics':
+				style.text(
+					'.BE-forumgame-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-forumgame-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				forumgame_topics.children('.list_row_h').show()
+				break
+			default:
+				style.text(
+					'.BE-forumgame-topics {'
+					+	'display: none;'
+					+'}'
+					+'.BE-forumgame-topic {'
+					+	'display: block;'
+					+'}'
+				)
+		}
+	}
+
+	var setting = settings.get('forum-group-forumgames')
+	
+	var forumgame_topics = $('<div class="favourite_h BE-forumgame-topics">')
+
+	var list = $('<div class="list_row_h">')
+
+	var forumgame_count = 0
+
+	$('#t_norm').find('div.topic_s>a').each(function() {
+		if (/forum game/i.test(this.text)) {
+			var row = $(this).closest('.list_row_odd')
+			row.clone().appendTo(list)
+			row.addClass('BE-forumgame-topic')
+			forumgame_count += 1
+		}
+	})
+
+	if (forumgame_count > 0) {
+
+		var bar = $('<div class="list_bar_h">')
+		.append(
+			$('<div class="lista_icon_3">').attr('style', 'background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADREAAA0RARg5FhkAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuM4zml1AAAAEWSURBVDhPfdC7SoNBEAXg+cHCUrzgK+RB8iKKhCARERTSiHYWCikCpkgRSJPOYCliYyEWgoriC3hB8hLHc342ywozKT427Nk5ycQA2Nxs0xrUodN0NpTxc5O6SbOcqYcZLNGIPmmYCnR+0Te901nyxvOWljU7L9gpL4tftMf7GbWKO33ZlNplQTsoOEgF9eOiRAWdskCtk7TCIK2gUyv80kuxwvO/FXrXFSJ8CFn0xs6vKkR+Ngyy6E291/aJwTNdMUiU5//g6NLgeVgzSJTnguNxBc/HukGiPBd0RxU8rxyWKM8Fh0OD54nDEuW5YH9g8DyuGiTKc8Fu3+C557BEeS5o9QyeOw5LlOeCrQuD54bDEuUq+AOV2hZAAh3hiwAAAABJRU5ErkJggg==") no-repeat scroll 0px 0px transparent'),
+			$('<div class="lista_bar_text">').text("Topics which appear to be forum games ("+forumgame_count+"	)")
+		)
+		.css('cursor', 'pointer')
+	
+		forumgame_topics
+		.append(bar, list)
+	}
+
+	var style = $('<style>').appendTo(document.head)
+
+	settings.onchange('forum-group-forumgames', on_update)
 
 }
 function feature_forum_move_edit_note() {
@@ -3899,7 +4103,9 @@ if (location.hostname == 'www.gog.com') {
 		if (/^\/forum/.test(window.location.pathname)) {
 			feature_forum_old_gog_avatar();
 			if (/^\/forum\/[^/]*(?:\/(?:page[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
+				feature_forum_group_news();
 				feature_forum_group_giveaways();
+				feature_forum_group_forumgames();
 				feature_forum_old_gog_avatar();
 				feature_forum_remove_fragment();
 				feature_forum_theme();
