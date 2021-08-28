@@ -5,7 +5,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2a
+// @version        3.0.2b
 // @grant          GM.getValue
 // @grant          GM.setValue
 // @grant          GM.xmlHttpRequest
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2a'
+var version = '3.0.2b'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the chanelog
 var last_BE_version
 
@@ -541,6 +541,13 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2b",
+		"date": "2021-08-28",
+		"changes": [
+			"Fixed: cutoff of top navbar's arrow with the number of updates.",
+		]
+	},
 	{
 		"version": "3.0.2a",
 		"date": "2021-05-20",
@@ -3839,7 +3846,8 @@ function feature_nav_display_updates() {
 	get_user_info.then((user_info) => {
 		function on_update(value) {
 			if (value && user_info.updates.products > 0) {
-				$('#menuUsername').attr('data-BE-updates', user_info.updates.products)
+				$('#menuUsername').attr('data-BE-updates', user_info.updates.products);
+				$('.menu-item.menu-account > a.menu-link').attr("style", 'overflow:visible;');
 			} else $('#menuUsername').removeAttr('data-BE-updates')
 		}
 
