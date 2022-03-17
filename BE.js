@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name           Barefoot Essentials Fork
 // @namespace      https://github.com/DawEdhel/Barefoot-Essentials-Fork
-// @description    Adds many enhancemnts to the GOG.com website
+// @description    Adds many enhancements to the GOG.com website
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2b
+// @version        3.0.2c
 // @grant          GM.getValue
 // @grant          GM.setValue
 // @grant          GM.xmlHttpRequest
@@ -17,8 +17,8 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2b'
-var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the chanelog
+var version = '3.0.2c'
+var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
 // Greasemonkey 4 compatibility
@@ -541,6 +541,14 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2c",
+		"date": "2022-03-17",
+		"changes": [
+			"Fixed: friends requests/chat messages notifications within the topbar's account menu.",
+			"Restored: forum replies' notifications within the topbar's community menu.",
+		]
+	},
 	{
 		"version": "3.0.2b",
 		"date": "2021-08-28",
@@ -3748,10 +3756,19 @@ function feature_nav_display_notifications() {
 			replies.toggle(value)
 			friend.toggle(value)
 
-			var total_alerts = (user_info.updates.unreadChatMessages || 0) + (user_info.updates.forum || 0) + (user_info.updates.pendingFriendRequests || 0)
-			if (value && total_alerts > 0) {
-				$('#menuUsername').attr('data-BE-alerts', total_alerts)
-			} else $('#menuUsername').removeAttr('data-BE-alerts')
+			var total_alerts_menuUsername = (user_info.updates.unreadChatMessages || 0) + (user_info.updates.pendingFriendRequests || 0)
+			if (value && total_alerts_menuUsername > 0) {
+				$('#menuUsername').attr('data-BE-alerts', total_alerts_menuUsername)
+			} else {
+				$('#menuUsername').removeAttr('data-BE-alerts')
+			}
+			
+                	var total_alerts_menuCommunity = (user_info.updates.messages || 0)
+                	if (value && total_alerts_menuCommunity > 0) {
+				$('.menu-item.js-menu-community > .menu-link.menu-uppercase').attr('data-BE-alerts', total_alerts_menuCommunity)
+                	} else {
+                		$('.menu-item.js-menu-community > .menu-link.menu-uppercase').removeAttr('data-BE-alerts')
+			}
 		}
 
 		function scrape_forum_replies() {
@@ -3768,12 +3785,12 @@ function feature_nav_display_notifications() {
 						
 						if (element) {
 
-							user_info.updates.forum = Number.parseInt(element.textContent.trim().replace(/[^0-9]*$/, ''))
+							user_info.updates.messages = Number.parseInt(element.textContent.trim().replace(/[^0-9]*$/, ''))
 							update_forum_replies()
-							sessionStorage.setItem(key, JSON.stringify({timestamp: Date.now(), forum: user_info.updates.forum}))
+							sessionStorage.setItem(key, JSON.stringify({timestamp: Date.now(), forum: user_info.updates.messages}))
 
 						} else {
-							user_info.updates.forum = 0
+							user_info.updates.messages = 0
 							update_forum_replies()
 							sessionStorage.setItem(key, JSON.stringify({timestamp: Date.now(), forum: 0}))
 						}
@@ -3785,9 +3802,9 @@ function feature_nav_display_notifications() {
 			}
 
 			function update_forum_replies(num_replies) {
-				var replies = $('<span class="menu-submenu-item__label">').text(user_info.updates.forum)
+				var replies = $('<span class="menu-submenu-item__label">').text(user_info.updates.messages)
 
-				if (user_info.updates.forum) replies.appendTo($('.js-menu-account .menu-submenu-item a[href="/forum/myrecentposts"]'))
+				if (user_info.updates.messages) replies.appendTo($('.js-menu-community .menu-submenu-item a[href="/forum/myrecentposts"]'))
 
 				on_update(settings.get('nav-display-notifications'))
 			}
@@ -3800,7 +3817,7 @@ function feature_nav_display_notifications() {
 						perform_scrape()
 						return
 					} else {
-						user_info.updates.forum = last_check.forum
+						user_info.updates.messages = last_check.forum
 						update_forum_replies()
 						return
 					}
@@ -3810,13 +3827,13 @@ function feature_nav_display_notifications() {
 		}
 
 		var chat = $('<span class="menu-submenu-item__label">').text(user_info.updates.unreadChatMessages)
-		if (user_info.updates.unreadChatMessages) chat.appendTo($('.js-menu-account .menu-submenu-item a[href="/account/chat"]'))
+		if (user_info.updates.unreadChatMessages) chat.appendTo($('.js-menu-account .menu-submenu-item a[href$="/account/chat"]'))
 
-		var replies = $('<span class="menu-submenu-item__label">').text(user_info.updates.forum)
-		if (user_info.updates.forum) replies.appendTo($('.js-menu-account .menu-submenu-item a[href="/forum/myrecentposts"]'))
+		var replies = $('<span class="menu-submenu-item__label">').text(user_info.updates.messages)
+		if (user_info.updates.messages) replies.appendTo($('.js-menu-community .menu-submenu-item a[href="/forum/myrecentposts"]'))
 
 		var friend = $('<span class="menu-submenu-item__label">').text(user_info.updates.pendingFriendRequests)
-		if (user_info.updates.pendingFriendRequests) friend.appendTo($('.js-menu-account .menu-submenu-item a[href="/account/friends"]'))
+		if (user_info.updates.pendingFriendRequests) friend.appendTo($('.js-menu-account .menu-submenu-item a[href$="/account/friends"]'))
 
 		$('<style>')
 		.text(
@@ -3835,7 +3852,25 @@ function feature_nav_display_notifications() {
 			+"}"
 		)
 		.appendTo(document.head)
-
+		
+                $('<style>')
+                .text(
+			".menu-item.js-menu-community > .menu-link.menu-uppercase[data-BE-alerts]:after {"
+			+"	content: attr(data-BE-alerts);"
+			+"	display: inline-block;"
+			+"	color: #ddd;"
+			+"	background-color: #a00;"
+			+"	line-height: 1;"
+			+"	padding: 0.25em 0.25em 0.15em;"
+			+"	border-radius: 0.25em;"
+			+"	margin: 0 0 0 0.5em;"
+			+"	font-size: 11px;"
+			+"	position: relative;"
+			+"	bottom: 1px;"
+			+"}"			
+		)
+                .appendTo(document.head)
+		
 		if (user_info.updates.forum === undefined) scrape_forum_replies()
 		setTimeout(settings.onchange.bind(settings, 'nav-display-notifications', on_update), 1)
 	})
