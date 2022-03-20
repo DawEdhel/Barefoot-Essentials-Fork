@@ -5,7 +5,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2c
+// @version        3.0.2d
 // @grant          GM.getValue
 // @grant          GM.setValue
 // @grant          GM.xmlHttpRequest
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2c'
+var version = '3.0.2d'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -541,6 +541,14 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2d",
+		"date": "2022-03-20",
+		"changes": [
+			"Fixed: some functionalities do not work if a page's URL address is localized.",
+			"Affected pages: /game/, /movie/, /promo/.",
+		]
+	},
 	{
 		"version": "3.0.2c",
 		"date": "2022-03-17",
@@ -3323,7 +3331,6 @@ function feature_gamecard_additional_information_links() {
 	})
 
 	var gogData = unsafeWindow.productcardData
-
 	if (gogData) {
 		var style = $('<style>').appendTo(document.head)
 		settings.onchange('gamecard-additional-information-links', on_update)
@@ -4125,7 +4132,7 @@ if (location.hostname == 'www.gog.com') {
 		if (/^\/forum/.test(window.location.pathname)) {
 			detect_forum_skin()
 			add_preview_styles()
-		} else if (/^\/(?:game|movie)\/[^/]*$/.test(window.location.pathname)) {
+		} else if (/^(?:\/[^/]*)?\/(?:game|movie)\/[^/]*$/.test(window.location.pathname)) {
 			compat_get_gogData()
 		}
 		feature_BE_styles();
@@ -4172,15 +4179,15 @@ if (location.hostname == 'www.gog.com') {
 				feature_post_preview();
 			}
 		}
-		if (/^\/movie\/[^/]*$/.test(window.location.pathname)) {
+		if (/^(?:\/[^/]*)?\/movie\/[^/]*$/.test(window.location.pathname)) {
 			feature_gamecard_additional_information_links();
 			feature_gamecard_show_descriptions();
 		}
-		if (/^\/game\/[^/]*$/.test(window.location.pathname)) {
+		if (/^(?:\/[^/]*)?\/game\/[^/]*$/.test(window.location.pathname)) {
 			feature_gamecard_additional_information_links();
 			feature_gamecard_show_descriptions();
 		}
-		if (/^\/promo\/[^/]*$/.test(window.location.pathname)) {
+		if (/^(?:\/[^/]*)?\/promo\/[^/]*$/.test(window.location.pathname)) {
 			feature_promo_show_discount();
 		}
 
