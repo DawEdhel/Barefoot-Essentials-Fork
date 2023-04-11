@@ -2614,7 +2614,7 @@ function feature_forum_group_forumgames() {
 		var bar = $('<div class="list_bar_h">')
 		.append(
 			$('<div class="lista_icon_3">').attr('style', 'background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACpUlEQVR42pWTWUhUYRTH//fez210FtHGZRKbtCJxSaWpKLB0VCgXwoJCkYgUfMhCtIceyvAhUiMSGdosipDoJSvTykzmwSI1NFAyyaWYcXCJZtRmusxdujPjRlNSB+7DOd85v3POn3Mp/MHUCgJdTIAsRE6iXf63ef5L75jdPmXjvHKp1U5kMMHZ/LAsfXzQGYam0qQQWXxyCoLY1TG4UHvx8XSn+bvTG5Ac7c/cKIkyqGRMye/gVSba7Lyh5JapvH/CISwDwpUETyu111WBTOlS5qBZwINeDrSUUbaXIEJJL1Osdr4xr378pMXKeQBXiiKzc1IU7axTpDqHeWwJo2EwOjE0KboLdFoahTqC0RkBWXEMCEOJbQNzGafuTXZRIUEMuqtjX0k7Z3R94nHpuRPhCgph0vfB5J4SsesoOKS1zVYRlVk+0G9lwAti+54Ln/dT2YnywMZjGqtLsJ5xHueeOKGWA/EaGq+HPQDdBhpWh4iRKREVmUSawq0tW37XrKSO7FLF1RwOH3JFfrAiippYpG1mkLCeRt0Lj9rl6QSzCyKae3jcP+6HULlH45pHU5uWAR8tAh72cXg7JkAVAOQmETS/48BLMuQlMTCO8LA5gN0xNPK3ESRKDdyAzIQgWXWBxlp8h/XBf9i1Ql+2vtWipIIDJRHPx3ZIjfQtAzxud3NrFhbvJDiUyoCi0CaJeMC9TO3RCP3B7cqXLf0c9WZUWBOwYyONghQitvTZ9lU1W4xuQKiccR2SIVROyv5l/Nl57mre5fHTM3P8ysnGafyYptKohkXIX09ZKm44cdNUMWT6uXLKS+aapCpHnZ6brKjyIVS6FPJdfGKdnNjZ2j9XW/ds2ujq7PUzrTZlAI1UrcxfrSRRLn/axn19P2FnbXZvfX4Bpvn+Cz0/Ym0AAAAASUVORK5CYII=") no-repeat scroll 0px 0px transparent'),
-			$('<div class="lista_bar_text">').text("Topics which appear to be forum games ("+forumgame_count+"	)")
+			$('<div class="lista_bar_text">').text("Topics which appear to be forum games ("+forumgame_count+")")
 		)
 		.css('cursor', 'pointer')
 	
