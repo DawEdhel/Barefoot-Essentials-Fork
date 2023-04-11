@@ -5,7 +5,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2e
+// @version        3.0.2f
 // @grant          GM.getValue
 // @grant          GM.setValue
 // @grant          GM.xmlHttpRequest
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2e'
+var version = '3.0.2f'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -573,6 +573,13 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2f",
+		"date": "2023-04-11",
+		"changes": [
+			"Added links for all forum groups to open new topics of selected group en masse.",
+		]
+	},
 	{
 		"version": "3.0.2e",
 		"date": "2022-10-03",
@@ -4302,6 +4309,33 @@ function feature_promo_show_discount() {
 	}, 500)
 
 }
+function feature_forum_add_open_new_group_topics_links() {
+
+    function open_urls_in_new_tabs(event) {
+        // clicking triggers parent's slidetoggle event
+       	event.stopPropagation();
+	event.stopImmediatePropagation();
+	
+	var urls = $(event.data.topics).toArray().reverse().map(a => a.href);
+	for (var i in urls) {
+	    window.open(urls[i], '_blank');
+        }
+    }
+    function add_link(custom_selector) {
+        var new_topics = $(custom_selector + ' > .list_row_h a.topic_s_a:visible');
+        $(custom_selector + ' > .list_bar_h > .lista_bar_text').first().after(
+            $('<div class="lista_bar_text" style="padding-left: 3px;"> | <a style="text-decoration: underline; text-underline-offset: 2px;">Open new topics of this group (' + new_topics.slice(Math.max(new_topics.length - 15, 0)).length + ' out of ' + new_topics.length +')</a></div>')
+            .click({topics: new_topics.slice(Math.max(new_topics.length - 15, 0))}, open_urls_in_new_tabs)
+        );
+    }
+
+    add_link('.favourite_h.BE-delisting-topics');
+    add_link('#t_fav');
+    add_link('.favourite_h.BE-news-topics');
+    add_link('.favourite_h.BE-giveaway-topics');
+    add_link('.favourite_h.BE-forumgame-topics');
+    add_link('#t_norm');
+}
 
 if (location.hostname == 'www.gog.com') {
 	settings.initialise(config, function() {
@@ -4337,6 +4371,7 @@ if (location.hostname == 'www.gog.com') {
 				feature_forum_old_gog_avatar();
 				feature_forum_remove_fragment();
 				feature_forum_theme();
+                		feature_forum_add_open_new_group_topics_links();
 			}
 			if (/^\/forum\/[^/]*\/[^/]*(?:\/(?:page[0-9]+|post[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
 				feature_avatar_zoom();
