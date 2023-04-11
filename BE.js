@@ -2400,7 +2400,7 @@ function feature_forum_group_news() {
 		var bar = $('<div class="list_bar_h">')
 		.append(
 			$('<div class="lista_icon_3">').attr('style', 'background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACWUlEQVR42mNkoBAw0tUAPz8/uf///zcCmd2bN2++RrQBgUFBPP///avi4eMr4OHl43z25LHnpo0bdxA0ICIykhFoYywPD2+7k5uHlL6JKcPJY0cZtqxdnbJ+/bq5cANSA30ZZ6/f/B9Zc1p6hjkHB8dEV3cPczMLC4Z/QNkfv34z3Lx5k2HO1IkNa1avboQbkBXom+DLw9Tz/cvPB/f/Mt/4pGP429jWNs7c3IKJi4ONgZmJCaz5289fDO8/fmJora2cvWL58jS4AWl+PqF1jN9XcX38zvDjLzPDh8UrGLg52BlAmkE0yACQ5m8/fjJ8BeIJnW3bpk2Z7A03IMrb26f43ZvN8m8/M/z9/pvhzcb1DBwSYgxc7GwM7KwsDIyMjAy///xl+P4LZMgvhuUL511qqqvRhxsQ5uXllPD4xV6DD58Z/gAVf5zQx8BibMTAwcbKwMrCDFb0598/hp+//zD8+PmbYfe2zW+Lc7NE4AYEentb+Lx4c9zxzXuwATejIv7+sbNlFuDnZxAUEmJ4/+4tAxc3DwMHEINccu3Shf/HDuzjnjF18newAX4+PrqqX75dsv7y8Z+B2BemKWxKNb8k5HpZGP+JKf14sP/YBw6mH/+ZVwAN4RCXkubg4OTkePX8Wenc2bPegA3w9fERBTK8ZVl/fK2Qe7hqzRuxBze/cxX9+c/o4MjzIW/9R5GmNZu21RNMytnBLoySrL/2hAu+dHryk52BERj3Kz+I337/l8V0xabtH4nKC6mBrlyMDIxlQsy/LZ7+Zr/2j4GhfenGHa+pkpmwAQDGifYR/VnHEAAAAABJRU5ErkJggg==") no-repeat scroll 0px 0px transparent'),
-			$('<div class="lista_bar_text">').text("Topics which appear to be news ("+news_count+"	)")
+			$('<div class="lista_bar_text">').text("Topics which appear to be news ("+news_count+")")
 		)
 		.css('cursor', 'pointer')
 	
@@ -2507,7 +2507,7 @@ function feature_forum_group_giveaways() {
 		var bar = $('<div class="list_bar_h">')
 		.append(
 			$('<div class="lista_icon_3">').attr('style', 'background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADREAAA0RARg5FhkAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuM4zml1AAAAEWSURBVDhPfdC7SoNBEAXg+cHCUrzgK+RB8iKKhCARERTSiHYWCikCpkgRSJPOYCliYyEWgoriC3hB8hLHc342ywozKT427Nk5ycQA2Nxs0xrUodN0NpTxc5O6SbOcqYcZLNGIPmmYCnR+0Te901nyxvOWljU7L9gpL4tftMf7GbWKO33ZlNplQTsoOEgF9eOiRAWdskCtk7TCIK2gUyv80kuxwvO/FXrXFSJ8CFn0xs6vKkR+Ngyy6E291/aJwTNdMUiU5//g6NLgeVgzSJTnguNxBc/HukGiPBd0RxU8rxyWKM8Fh0OD54nDEuW5YH9g8DyuGiTKc8Fu3+C557BEeS5o9QyeOw5LlOeCrQuD54bDEuUq+AOV2hZAAh3hiwAAAABJRU5ErkJggg==") no-repeat scroll 0px 0px transparent'),
-			$('<div class="lista_bar_text">').text("Topics which appear to be giveaways ("+giveaway_count+"	)")
+			$('<div class="lista_bar_text">').text("Topics which appear to be giveaways ("+giveaway_count+")")
 		)
 		.css('cursor', 'pointer')
 	
