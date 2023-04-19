@@ -5,7 +5,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2f
+// @version        3.0.2g
 // @grant          GM.getValue
 // @grant          GM.setValue
 // @grant          GM.xmlHttpRequest
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2f'
+var version = '3.0.2g'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -777,6 +777,15 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2g",
+		"date": "2023-04-19",
+		"changes": [
+		        "Added 'Open new topics of this group' links to forums' main page.",
+                        "Added option for "show more" buttons on forums' main page to load all topics, sorted by 'last update', on a single click (thanks to Adalia for providing a sorting feature).",
+                        "Added feature toggles for both features mentioned above.",
+		]
+	},
 	{
 		"version": "3.0.2f",
 		"date": "2023-04-11",
