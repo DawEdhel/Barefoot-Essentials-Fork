@@ -782,7 +782,7 @@ var changelog = [
 		"date": "2023-04-19",
 		"changes": [
 		        "Added 'Open new topics of this group' links to forums' main page.",
-                        "Added option for "show more" buttons on forums' main page to load all topics, sorted by 'last update', on a single click (thanks to Adalia for providing a sorting feature).",
+                        "Added option for 'show more' buttons on forums' main page to load all topics, sorted by 'last update', on a single click (thanks to Adalia for providing a sorting feature).",
                         "Added feature toggles for both features mentioned above.",
 		]
 	},
