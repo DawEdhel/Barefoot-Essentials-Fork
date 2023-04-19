@@ -474,6 +474,192 @@ function fetch_user_info() {
 	)
 }
 
+function add_link_forum_main_page(custom_selector, after_selector) {
+    var new_topics = $('div.module.topics div.module_in > div' + custom_selector + ' > div.item:not(.visited) a.dark_un');
+    $('div.module.topics div.module_in > h2' + custom_selector + ' > ' + after_selector).first().after(
+        $('<span class="text" style="padding-left: 3px;"> | <a style="text-decoration: underline; text-underline-offset: 3px; font-size: 10px; vertical-align: middle;">Open new topics of this group (' + new_topics.slice(Math.max(new_topics.length - open_topics_max_count, 0)).length + ' out of ' + new_topics.length +')</a></span>')
+        .click({topics: new_topics.slice(Math.max(new_topics.length - open_topics_max_count, 0))}, open_urls_in_new_tabs)
+    );
+}
+function add_link_forum_selected(custom_selector) {
+    var new_topics = $(custom_selector + ' > .list_row_h a.topic_s_a:visible');
+    $(custom_selector + ' > .list_bar_h > .lista_bar_text').first().after(
+        $('<div class="lista_bar_text" style="padding-left: 3px;"> | <a style="text-decoration: underline; text-underline-offset: 2px;">Open new topics of this group (' + new_topics.slice(Math.max(new_topics.length - open_topics_max_count, 0)).length + ' out of ' + new_topics.length +')</a></div>')
+        .click({topics: new_topics.slice(Math.max(new_topics.length - open_topics_max_count, 0))}, open_urls_in_new_tabs)
+    );
+}
+function open_urls_in_new_tabs(funcEvent) {
+    funcEvent.preventDefault();
+    funcEvent.stopPropagation();
+    funcEvent.stopImmediatePropagation();
+
+    var urls = $(funcEvent.data.topics).toArray().reverse().map(a => a.href);
+
+    if (navigator.userAgent.indexOf("Firefox") != -1) {
+        var curWindow = window;
+        for (var i in urls) {
+            curWindow = curWindow.open(urls[i], '_blank');
+        }
+    }
+    else {
+        for (var i in urls) {
+            window.open(urls[i], '_blank');
+        }
+    }
+
+    return false;
+}
+
+function forum_main_page_add_show_more_observers(calledByThisFeatureKey) {
+
+    function OnValueChanged_moreRecentPage(calledByThisFeatureKey) {
+        switch (calledByThisFeatureKey) {
+            case "forum_make_show_more_buttons_get_all_topics":
+                if ($('div.module.topics div.module_in > h2:eq(1) > span#moreRecent:visible').length > 0) {
+                    $('div.module.topics div.module_in > h2:eq(1) > span#moreRecent').click();
+                }
+                else {
+                    observerMoreRecent.disconnect();
+
+                    var sorted = getSorted('div.module.topics div.module_in > div#recentTopics > div.item');
+                    $('div.module.topics div.module_in > div#recentTopics').html(sorted);
+
+                    if (settings.get('forum-add-open-new-topics-links')) {
+                        $('div.module.topics div.module_in > h2:eq(1) > span.text:last').remove();
+                        add_link_forum_main_page(':eq(1)', 'input#moreRecentPage');
+                    }
+                }
+                break;
+            case "forum-add-open-new-topics-links":
+                if (!settings.get('forum_make_show_more_buttons_get_all_topics')) {
+                    $('div.module.topics div.module_in > h2:eq(1) > span.text:last').remove();
+                    add_link_forum_main_page(':eq(1)', 'input#moreRecentPage');
+                }
+                break;
+        }
+    }
+    function OnValueChanged_moreMostPopularPage(calledByThisFeatureKey) {
+        switch (calledByThisFeatureKey) {
+            case "forum_make_show_more_buttons_get_all_topics":
+                if ($('div.module.topics div.module_in > h2:eq(2) > span#moreMostPopular:visible').length > 0) {
+                    $('div.module.topics div.module_in > h2:eq(2) > span#moreMostPopular').click();
+                }
+                else {
+                    observerMoreMostPopular.disconnect();
+
+                    var sorted = getSorted('div.module.topics div.module_in > div#hotTopics > div.item');
+                    $('div.module.topics div.module_in > div#hotTopics').html(sorted);
+
+                    if (settings.get('forum-add-open-new-topics-links')) {
+                        $('div.module.topics div.module_in > h2:eq(2) > span.text:last').remove();
+                        add_link_forum_main_page(':eq(2)', 'input#moreMostPopularPage');
+                    }
+                }
+                break;
+            case "forum-add-open-new-topics-links":
+                if (!settings.get('forum_make_show_more_buttons_get_all_topics')) {
+                    $('div.module.topics div.module_in > h2:eq(2) > span.text:last').remove();
+                    add_link_forum_main_page(':eq(2)', 'input#moreMostPopularPage');
+                }
+                break;
+        }
+    }
+
+    function getSorted(data) /* (c) AF */ {
+        const dataArray = $(data).toArray();
+        const dataMapped = dataArray.map((v, i) => { return { i, value: parseDate($(v).find("span.updated").text().trim()) }; });
+        dataMapped.sort((a, b) => { return b.value - a.value; });
+        return dataMapped.map((v) => dataArray[v.i]);
+    }
+    function parseDate(dateString) /* (c) AF */ {
+        if(!dateString)
+        {
+            return new Date("1900-01-01");
+        }
+        if(dateString.indexOf("now") >= 0)
+        {
+            return Date.now();
+        }
+        else if(dateString.indexOf("min") >= 0)
+        {
+            var mins = StripNonNumbersParse(dateString) * 60000;
+            return new Date(Date.now() - mins);
+        }
+        else if(dateString.indexOf("hrs") >= 0)
+        {
+            var hrs = StripNonNumbersParse(dateString) * 3600000;
+            return new Date(Date.now() - hrs);
+        }
+        else if(dateString.indexOf("Yesterday") >= 0)
+        {
+            var today = new Date();
+            var yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+            return yesterday;
+        }
+        else if(dateString.indexOf("days") >= 0)
+        {
+            var days = StripNonNumbersParse(dateString)
+            var today = new Date();
+            var date = new Date(today);
+            date.setDate(today.getDate() - days);
+            return date;
+        }
+        else
+        {
+            var aString = dateString.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            var strArray = aString.split(" ");
+            var month = months[strArray[0]];
+            var day = strArray[1];
+            var year = strArray[2];
+            return new Date(year, month, day);
+        }
+    }
+    function StripNonNumbersParse(aString) /* (c) AF */ {
+        return parseInt(aString.replace(/\D/g, ''));
+    }
+
+    if ($('div.module.topics div.module_in').length > 0) {
+        var observerMoreRecent      = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                switch (mutation.type) {
+                    case "attributes":
+                        switch (mutation.attributeName) {
+                            case "class":
+                                if (mutation.oldValue.includes("spin") && !mutation.target.className.includes("spin")) {
+                                    OnValueChanged_moreRecentPage(calledByThisFeatureKey);
+                                }
+                                break;
+                        }
+                        break;
+                }
+            });
+        });
+        var observerMoreMostPopular = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                switch (mutation.type) {
+                    case "attributes":
+                        switch (mutation.attributeName) {
+                            case "class":
+                                if (mutation.oldValue.includes("spin") && !mutation.target.className.includes("spin")) {
+                                    OnValueChanged_moreMostPopularPage(calledByThisFeatureKey);
+                                }
+                                break;
+                        }
+                        break;
+                }
+            });
+        });
+        var options = {
+            attributeFilter : ['class'],
+            attributeOldValue: true,
+        }
+
+        observerMoreRecent     .observe($('div.module.topics div.module_in > h2:eq(1) > span#moreRecent'     ).get(0), options);
+        observerMoreMostPopular.observe($('div.module.topics div.module_in > h2:eq(2) > span#moreMostPopular').get(0), options);
+    }
+}
+
 /*-- global variables - don't judge me --*/
 var forum_skin = null
 var gog_sync_element = null
@@ -497,6 +683,22 @@ var style_discount_colour_huge = '#4a2cc3'
 var style_discount_colour_large = '#2ca3c3'
 var style_discount_colour_medium = '#58b600'
 var style_discount_colour_small = '#9b8e02'
+
+const open_topics_max_count = 15;
+const months = {
+    Jan: 0,
+    Feb: 1,
+    Mar: 2,
+    Apr: 3,
+    May: 4,
+    Jun: 5,
+    Jul: 6,
+    Aug: 7,
+    Sep: 8,
+    Oct: 9,
+    Nov: 10,
+    Dec: 11
+};
 
 
 /*-- utility functions --*/
@@ -546,6 +748,8 @@ config = {
 		{"type": "choice", "options": ["None", "Community Wishlist"], "def": "None", "key": "forum-theme", "label": "Custom forum theme", "comment": "Custom themes are still a work-in-progress. Changes the appearance of the forum."},	
 		{"type": "bool", "def": true, "key": "forum-hide-spoilers", "label": "hide spoilers"},	
 		{"type": "bool", "def": true, "key": "forum-post-preview", "label": "preview on post/reply window"},
+     	        {"type": "bool", "def": true, "key": "forum-add-open-new-topics-links", "label": "Add 'Open new topics of this group' links"},
+                {"type": "bool", "def": true, "key": "forum_make_show_more_buttons_get_all_topics", "label": "Make 'show more' buttons on main page to get all topics, sorted by 'Last update', on a single click"},
 	],
 	"Misc": [
 		{"type": "choice", "options": ["light"], "def": "light", "key": "BE-style", "label": "Barefoot Essentials style"},
@@ -4309,32 +4513,36 @@ function feature_promo_show_discount() {
 	}, 500)
 
 }
-function feature_forum_add_open_new_group_topics_links() {
 
-    function open_urls_in_new_tabs(event) {
-        // clicking triggers parent's slidetoggle event
-       	event.stopPropagation();
-	event.stopImmediatePropagation();
-	
-	var urls = $(event.data.topics).toArray().reverse().map(a => a.href);
-	for (var i in urls) {
-	    window.open(urls[i], '_blank');
-        }
-    }
-    function add_link(custom_selector) {
-        var new_topics = $(custom_selector + ' > .list_row_h a.topic_s_a:visible');
-        $(custom_selector + ' > .list_bar_h > .lista_bar_text').first().after(
-            $('<div class="lista_bar_text" style="padding-left: 3px;"> | <a style="text-decoration: underline; text-underline-offset: 2px;">Open new topics of this group (' + new_topics.slice(Math.max(new_topics.length - 15, 0)).length + ' out of ' + new_topics.length +')</a></div>')
-            .click({topics: new_topics.slice(Math.max(new_topics.length - 15, 0))}, open_urls_in_new_tabs)
-        );
-    }
+function feature_forum_add_open_new_group_topics_links(location) {
 
-    add_link('.favourite_h.BE-delisting-topics');
-    add_link('#t_fav');
-    add_link('.favourite_h.BE-news-topics');
-    add_link('.favourite_h.BE-giveaway-topics');
-    add_link('.favourite_h.BE-forumgame-topics');
-    add_link('#t_norm');
+    if (!settings.get('forum-add-open-new-topics-links')) return;
+
+    switch(location) {
+        case "forum-main-page":
+            if ($('div.module.topics div.module_in').length > 0)
+            {
+                add_link_forum_main_page(':eq(0)', 'span.text'); // "My favourite topics"
+                add_link_forum_main_page(':eq(1)', 'input#moreRecentPage'); // "Topics I've participated in"
+                add_link_forum_main_page(':eq(2)', 'input#moreMostPopularPage'); // "Hot topics"
+
+                forum_main_page_add_show_more_observers("forum-add-open-new-topics-links");
+            }
+            break;
+        case "forum-selected":
+            add_link_forum_selected('.favourite_h.BE-delisting-topics');
+            add_link_forum_selected('#t_fav');
+            add_link_forum_selected('.favourite_h.BE-news-topics');
+            add_link_forum_selected('.favourite_h.BE-giveaway-topics');
+            add_link_forum_selected('.favourite_h.BE-forumgame-topics');
+            add_link_forum_selected('#t_norm');
+            break;
+    }
+}
+function feature_forum_make_show_more_buttons_get_all_topics() {
+    if (!settings.get('forum_make_show_more_buttons_get_all_topics')) return;
+
+    forum_main_page_add_show_more_observers("forum_make_show_more_buttons_get_all_topics");
 }
 
 if (location.hostname == 'www.gog.com') {
@@ -4363,6 +4571,8 @@ if (location.hostname == 'www.gog.com') {
 		feature_paging_shortcut_keys();
 		if (/^\/forum/.test(window.location.pathname)) {
 			feature_forum_old_gog_avatar();
+                        feature_forum_add_open_new_group_topics_links("forum-main-page");
+                        feature_forum_make_show_more_buttons_get_all_topics();
 			if (/^\/forum\/[^/]*(?:\/(?:page[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
 				feature_forum_group_delistings();
 				feature_forum_group_news();
@@ -4371,7 +4581,7 @@ if (location.hostname == 'www.gog.com') {
 				feature_forum_old_gog_avatar();
 				feature_forum_remove_fragment();
 				feature_forum_theme();
-                		feature_forum_add_open_new_group_topics_links();
+                                feature_forum_add_open_new_group_topics_links("forum-selected");
 			}
 			if (/^\/forum\/[^/]*\/[^/]*(?:\/(?:page[0-9]+|post[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
 				feature_avatar_zoom();
