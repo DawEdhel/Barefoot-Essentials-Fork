@@ -5,7 +5,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2g
+// @version        3.0.2h
 // @grant          GM.getValue
 // @grant          GM.setValue
 // @grant          GM.xmlHttpRequest
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2g'
+var version = '3.0.2h'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -481,8 +481,8 @@ function add_link_forum_main_page(custom_selector, after_selector) {
         .click({topics: new_topics.slice(Math.max(new_topics.length - open_topics_max_count, 0))}, open_urls_in_new_tabs)
     );
 }
-function add_link_forum_selected(custom_selector) {
-    var new_topics = $(custom_selector + ' > .list_row_h a.topic_s_a:visible');
+function add_link_forum_selected(custom_selector, onlyVisibleTopics) {
+    var new_topics = $(custom_selector + ' > .list_row_h a.topic_s_a' + (onlyVisibleTopics ? ":visible" : ""));
     $(custom_selector + ' > .list_bar_h > .lista_bar_text').first().after(
         $('<div class="lista_bar_text" style="padding-left: 3px;"> | <a style="text-decoration: underline; text-underline-offset: 2px;">Open new topics of this group (' + new_topics.slice(Math.max(new_topics.length - open_topics_max_count, 0)).length + ' out of ' + new_topics.length +')</a></div>')
         .click({topics: new_topics.slice(Math.max(new_topics.length - open_topics_max_count, 0))}, open_urls_in_new_tabs)
@@ -737,7 +737,8 @@ config = {
 		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group above favourites", "key": "forum-group-delistings", "label": "delisting topics (page refresh required)"},
        		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and expand", "key": "forum-group-news", "label": "news topics (page refresh required)"},
        		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group below other topics", "key": "forum-group-giveaways", "label": "giveaway topics (page refresh required)"},
-       		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group below other topics", "key": "forum-group-forumgames", "label": "forum game topics (page refresh required)"},	
+       		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group below other topics", "key": "forum-group-forumgames", "label": "forum game topics (page refresh required)"},
+       	        {"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and collapse", "key": "forum-group-spams", "label": "spam topics (page refresh required)"},
 		{"type": "bool", "def": true, "key": "forum-move-edit-note", "label": "restyle \"post edited\" note on edited posts"},	
 		{"type": "bool", "def": false, "key": "forum-move-online-offline-status", "label": "Move online/offline status to its original position"},	
 		{"type": "bool", "def": false, "key": "forum-old-gog-avatar", "label": "Replace the official \"GOG.com\" user's avatar with old green-and-yellow GOG logo"},	
@@ -777,6 +778,13 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2h",
+		"date": "2023-04-30",
+		"changes": [
+			"Added ability to group spam topics (on a page if a user has 3+ topics with 0 replies all his topics marked as a spam).",
+		]
+	},
 	{
 		"version": "3.0.2g",
 		"date": "2023-04-19",
@@ -2840,6 +2848,131 @@ function feature_forum_group_forumgames() {
 	settings.onchange('forum-group-forumgames', on_update)
 
 }
+function feature_forum_group_spams() {
+
+	function on_update(value) {
+
+		if (value == 'group above favourites') {
+			spam_topics.remove().insertBefore($('#t_fav'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo($('#t_norm'))
+		}
+		else if (value == 'group below other topics') {
+			spam_topics.remove().insertAfter($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo(spam_topics)
+		} else {
+			spam_topics.remove().insertBefore($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo($('#t_norm'))
+		}
+
+		switch (value) {
+			case 'hide':
+				style.text(
+					'.BE-spam-topics, .BE-spam-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				break
+			case 'group and collapse':
+				style.text(
+					'.BE-spam-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-spam-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				spam_topics.children('.list_row_h').hide()
+				break
+			case 'group above favourites':
+			case 'group and expand':
+			case 'group below other topics':
+				style.text(
+					'.BE-spam-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-spam-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				spam_topics.children('.list_row_h').show()
+				break
+			default:
+				style.text(
+					'.BE-spam-topics {'
+					+	'display: none;'
+					+'}'
+					+'.BE-spam-topic {'
+					+	'display: block;'
+					+'}'
+				)
+		}
+	}
+
+	var setting = settings.get('forum-group-spams');
+	var spam_topics = $('<div class="favourite_h BE-spam-topics">');
+	var list = $('<div class="list_row_h">');
+	var spam_count = 0;
+
+    var potential_spam_topics = $('#t_norm .list_row_odd').filter(function() {
+        return $(this).find('.replies').text() == "0";
+    });
+    var users_topics_count = $(potential_spam_topics)
+      .find('.created_by > span.user[gog-user]').toArray()
+      .map(item => $(item).attr("gog-user"))
+      .reduce(function(users, user){
+          if (!users[user]) {
+              users[user] = 1;
+          } else {
+              users[user]++;
+          }
+          return users;
+      }, []);
+
+    var spam_users = Object.keys(users_topics_count).map(k => {
+        return {id: k, count: users_topics_count[k]};
+    })
+    .filter(item => item.count >= 3)
+    .map(item => item.id);
+
+	$('#t_norm .list_row_odd .created_by > span.user[gog-user]').each(function() {
+		if ($.inArray($(this).attr("gog-user"), spam_users) > -1) {
+			var row = $(this).closest('.list_row_odd')
+			row.clone().appendTo(list)
+			row.addClass('BE-spam-topic')
+			spam_count += 1
+		}
+	})
+
+	if (spam_count > 0) {
+
+		var bar = $('<div class="list_bar_h">')
+		.append(
+			$('<div class="lista_icon_3">').attr('style', 'background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAY9QTFRFR3BM3rko2KgAxp4DyJ4DAAAAw5cAAAAAAAAA2qkAsIcA3LowAAAAr4cAxpoAroUAv5EA/O+rADJ+uoAm/9FFu4oA+MVJm10Cu4sAADJ4+cZJ/9pA/MhInF4CQUFE/8xE/8k+nV4BenVQpWEAADBxwoIiAC1xK0ln8sFEu4AmADF9/9NCADJ9/9JEvZAAADB2ADF4E2ejE2ikF2mhGGmfDmaoCzRpEWSemJFUAWKz/9tAAjFuDWKg1LtK/9lA/+WRY3tY/9s/0LxpCmKn6dSTADBwu5AAkpeFipF/AC1wAC1s/uOV07pKAGG0/95JoKGE69Jx3MROv44A8NV0AV+wlJZx3Mlx3Mly1seODmSmZH1YvpIA28dwc39iuooA792P28RP/PCtcn1j/dxLAC1vl5FUE2ai/+xJcH1wADF50cOOADJ5ADB5AC9tDDhwE2Wh/+pxF2ef/+mVCTNpAjR4vIsA/+GP9tly/+lJF2adf4ZgD2Gc/+1troQAwpEAC16eCV+k792N+++tAF+y/+lF2ACCxQAAAA90Uk5TAO6vv78ivDMkr+mxI6y6s/rWKQAAANxJREFUGNNjYGDg4oeDWl4GBgbG+ERBGGhq5GZgYAuKE5UQFZWQKAWSdXwMDKy++gaSmTnZkiWSBvrNPEA9zn6BsQnJSel5FVUtDUA+g41TQGhwWEx4RkF5TT1IwNzexd/dy9sjIquorBokYGJm7aqioqbmmZJbXAkSMFa3sLWSlrZz9ElVLwQJGCrIy0iJiYlJycgr5IMEjOSUFWXFxcVlFZXl0kACpkqqmsIgoKmqFAkSsNTQ1hUBAV1tjRAgn9NBS0cIAnS0opgYGFjc9ARgQC+amYGBgx0ZcAAAAHMpuVTfpnEAAAAASUVORK5CYII=") no-repeat scroll 0px 0px transparent'),
+			$('<div class="lista_bar_text">').text("Topics which appear to be spams ("+spam_count+")")
+		)
+		.css('cursor', 'pointer')
+
+		spam_topics
+		.append(bar, list)
+	}
+
+	var style = $('<style>').appendTo(document.head)
+
+	settings.onchange('forum-group-spams', on_update)
+
+}
 
 function feature_forum_move_edit_note() {
 
@@ -4539,12 +4672,13 @@ function feature_forum_add_open_new_group_topics_links(location) {
             }
             break;
         case "forum-selected":
-            add_link_forum_selected('.favourite_h.BE-delisting-topics');
-            add_link_forum_selected('#t_fav');
-            add_link_forum_selected('.favourite_h.BE-news-topics');
-            add_link_forum_selected('.favourite_h.BE-giveaway-topics');
-            add_link_forum_selected('.favourite_h.BE-forumgame-topics');
-            add_link_forum_selected('#t_norm');
+            add_link_forum_selected('.favourite_h.BE-delisting-topics', false);
+            add_link_forum_selected('#t_fav', false);
+            add_link_forum_selected('.favourite_h.BE-news-topics', false);
+            add_link_forum_selected('.favourite_h.BE-giveaway-topics', false);
+            add_link_forum_selected('.favourite_h.BE-forumgame-topics', false);
+            add_link_forum_selected('.favourite_h.BE-spam-topics', false);
+            add_link_forum_selected('#t_norm', true);
             break;
     }
 }
@@ -4587,6 +4721,7 @@ if (location.hostname == 'www.gog.com') {
 				feature_forum_group_news();
 				feature_forum_group_giveaways();
 				feature_forum_group_forumgames();
+                                feature_forum_group_spams();
 				feature_forum_old_gog_avatar();
 				feature_forum_remove_fragment();
 				feature_forum_theme();
