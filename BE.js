@@ -5,7 +5,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2h
+// @version        3.0.2i
 // @grant          GM.getValue
 // @grant          GM.setValue
 // @grant          GM.xmlHttpRequest
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2h'
+var version = '3.0.2i'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -155,7 +155,7 @@ function add_preview_styles() {
 		+'.BE-preview {'
 		+	'height: 150px;'
 		+	'overflow: auto;'
-		+	'margin: 0 0 0 143px;'
+		+	'margin: 0 0 10px 137px;'
 		+	'padding: 5px;'
 		+	'clear: both;'
 		+	'width: 650px;'
@@ -751,6 +751,7 @@ config = {
 		{"type": "bool", "def": true, "key": "forum-post-preview", "label": "preview on post/reply window"},
      	        {"type": "bool", "def": true, "key": "forum-add-open-new-topics-links", "label": "Add 'Open new topics of this group' links"},
                 {"type": "bool", "def": true, "key": "forum_make_show_more_buttons_get_all_topics", "label": "Make 'show more' buttons on main page to get all topics, sorted by 'Last update', on a single click"},
+        	{"type": "bool", "def": true, "key": "forum_expand_popups_to_fit_content", "label": "Expand thread/post popups to fit content"},
 	],
 	"Misc": [
 		{"type": "choice", "options": ["light"], "def": "light", "key": "BE-style", "label": "Barefoot Essentials style"},
@@ -778,6 +779,13 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2i",
+		"date": "2023-05-16",
+		"changes": [
+			"Added ability to expand forum thread/post popups to fit content on chromium-based browsers.",
+		]
+	},
 	{
 		"version": "3.0.2h",
 		"date": "2023-04-30",
@@ -4687,6 +4695,15 @@ function feature_forum_make_show_more_buttons_get_all_topics() {
 
     forum_main_page_add_show_more_observers("forum_make_show_more_buttons_get_all_topics");
 }
+function feature_forum_expand_popups_to_fit_content() {
+    if (settings.get('forum_expand_popups_to_fit_content')) {
+        if (navigator.userAgent.indexOf("Chrome/") != -1) {
+            $(document).ready(function() {
+                window.resizeTo(1052, 820);
+            });
+        }
+    }
+}
 
 if (location.hostname == 'www.gog.com') {
 	settings.initialise(config, function() {
@@ -4744,6 +4761,7 @@ if (location.hostname == 'www.gog.com') {
 			}
 			if (location.pathname == '/forum/ajax/popUp') {
 				feature_post_preview();
+                		feature_forum_expand_popups_to_fit_content();
 			}
 		}
 		if (/^(?:\/[^/]*)?\/movie\/[^/]*$/.test(window.location.pathname)) {
