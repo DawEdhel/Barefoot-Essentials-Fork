@@ -5,7 +5,10 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2k
+// @version        3.0.2l
+// @updateURL      https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
+// @downloadURL    https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
+// @supportURL     https://github.com/DawEdhel/Barefoot-Essentials-Fork/issues
 // @grant          GM.getValue
 // @grant          GM.setValue
 // @grant          GM.xmlHttpRequest
@@ -17,7 +20,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2k'
+var version = '3.0.2l'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -732,7 +735,9 @@ const months = {
 function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
 }
-
+function isCurrentPageMainPage() {
+  return $('div.news-section-wrapper').length || $('news-section').length;
+}
 
 /*-- utility functions --*/
 function cmpVersion(a, b) {
@@ -816,6 +821,16 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2l",
+		"date": "2024-05-16",
+        "changes": [
+			"Fixed 'move compacted news section to the top of the main page' feature not working with the newest frontpage.",
+			"Fixed 'Konami easter-egg' not working with the newest frontpage.",
+			"Fixed 'About GOG' submenu's hover behaviour.",
+			"Added various script's metadata fields for better compatibility with scripts managers.",
+        ]
+	},
 	{
 		"version": "3.0.2k",
 		"date": "2024-05-14",
@@ -4377,15 +4392,19 @@ function feature_nav_about_links() {
                         about_gog_special_links_submenu.removeClass("BE-about-gog-special-links-submenu");
                 }
 
+        	if (value["Konami easter-egg"] && isCurrentPageMainPage() && typeof window.loader === 'undefined') {
+           		konami_script.appendTo(document.head);
+       		}
 	}
 
 	var about_gog_styles = $('<style>').text(`
 .BE-about-gog-special-links-submenu {
     display: none;
-    position: fixed;
+    position: absolute;
     left: 100%;
-    width: 100%;
-    top: 0px;
+    min-width: 100%;
+    width: max-content;
+    top: -8px;
     background: #fff;
     padding: 5px 0px;
 }
@@ -4394,10 +4413,13 @@ function feature_nav_about_links() {
 }
 .BE-about-gog-special-link {
     background: #fff !important;
+    padding-right: 0px !important;
 }
 .BE-about-gog-special-link:hover {
     background: #e6e6e6 !important;
-}`).appendTo(document.head)
+}`).appendTo(document.head);
+
+    	var konami_script = $('<script type="text/javascript" src="//www4-static.gog-statics.com/js/konami/dist/bundle.js">');
 
         var about_menu = $('.js-menu-about');
         var about_gog_link = about_menu.find('a.menu-submenu-link[href*="/about_gog"]');
@@ -4884,16 +4906,28 @@ function feature_forum_mark_new_users_posts() {
 function feature_main_page_move_compacted_news_section_to_the_top() {
 
     function on_update(value) {
-		if (value) {
-            $('div:has(> div.news-section-wrapper)').insertAfter ('div.nav-spacer.menu-spacer');
+	    if (value) {
+            // old frontpage version
+            if ($('div:has(> div.news-section-wrapper)').length) {
+                $('div:has(> div.news-section-wrapper)').insertAfter('div.nav-spacer.menu-spacer');
+            }
+            // new frontpage version
+            else if ($('news-section').length) {
+                $('news-section').insertBefore('big-spot-section');
+            }
 			style.appendTo(document.head);
 		} else {
-            $('div:has(> div.news-section-wrapper)').insertBefore('div.footer-spacer');
+            if ($('div:has(> div.news-section-wrapper)').length) {
+                $('div:has(> div.news-section-wrapper)').insertBefore('div.footer-spacer');
+            }
+            else if ($('news-section').length) {
+                $('news-section').insertBefore('explore-catalog');
+            }
 			style.remove();
 		}
 	}
 
-    if ($('div.news-section-wrapper')) {
+    if (isCurrentPageMainPage()) {
 
         var style = $('<style>').text(`
 div.news-section-wrapper > div.section-title {
@@ -4904,7 +4938,17 @@ div.news-section__body {
     height: 175px;
 }
 a.news-tile {
-    height: 150px;
+    height: 150px !important;
+}
+
+news-section {
+    margin: -25px 0 !important;
+}
+news-section > section-header > h2.section-header {
+    padding-bottom: 0px !important;
+}
+news-section > slider-navigation > div.swiper-container {
+    padding-top: 0px !important;
 }`);
 
         $(document).ready(function() {
