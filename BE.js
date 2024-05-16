@@ -5,7 +5,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2l
+// @version        3.0.2la
 // @updateURL      https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @downloadURL    https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @supportURL     https://github.com/DawEdhel/Barefoot-Essentials-Fork/issues
@@ -20,7 +20,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2l'
+var version = '3.0.2la'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -822,14 +822,21 @@ config = {
 }
 var changelog = [
 	{
+		"version": "3.0.2la",
+		"date": "2024-05-16",
+        	"changes": [
+			"Improved 'move compacted news section to the top of the main page' feature for the old frontpage to be inserted before the highlights section instead of at the top of the page.",
+        	]
+	},
+	{
 		"version": "3.0.2l",
 		"date": "2024-05-16",
-        "changes": [
+        	"changes": [
 			"Fixed 'move compacted news section to the top of the main page' feature not working with the newest frontpage.",
 			"Fixed 'Konami easter-egg' not working with the newest frontpage.",
 			"Fixed 'About GOG' submenu's hover behaviour.",
 			"Added various script's metadata fields for better compatibility with scripts managers.",
-        ]
+        	]
 	},
 	{
 		"version": "3.0.2k",
@@ -4909,7 +4916,7 @@ function feature_main_page_move_compacted_news_section_to_the_top() {
 	    if (value) {
             // old frontpage version
             if ($('div:has(> div.news-section-wrapper)').length) {
-                $('div:has(> div.news-section-wrapper)').insertAfter('div.nav-spacer.menu-spacer');
+                $('div:has(> div.news-section-wrapper)').insertBefore('div.container > div.section-title.big-spots-header');
             }
             // new frontpage version
             else if ($('news-section').length) {
@@ -4951,7 +4958,7 @@ news-section > slider-navigation > div.swiper-container {
     padding-top: 0px !important;
 }`);
 
-        $(document).ready(function() {
+        $(window).on('load', function() {
             setTimeout(settings.onchange.bind(settings, 'main-page-move-compacted-news-section-to-the-top', on_update), 1);
         })
     }
