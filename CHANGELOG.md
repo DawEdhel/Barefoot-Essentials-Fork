@@ -1,3 +1,8 @@
+## 3.0.2m (2025-08-03)
+* Fixed 'GOG Classic 2012' and 'Bright black' navigation bar themes' logos.
+* Improved 'GOG Classic 2012' navigation bar theme, according to its archive page.
+* Added 'Claim current giveaway' about menu GOG link.
+
 ## 3.0.2la (2024-05-16)
 * Improved 'move compacted news section to the top of the main page' feature for the old frontpage to be inserted before the highlights section instead of at the top of the page.
 
