@@ -1,3 +1,9 @@
+## 3.0.2n (2025-10-30)
+* Split 'Navigation bar theme' option into both 'Navigation bar logo' (new) and 'Navigation bar theme' (old) options to make possible having different combinations.
+* Fixed 'about GOG submenu' colors to inherit GOG newest system color mode.
+* Added option to autocancel the new review form on page load in product cards.
+* Fixed 'file not found' error, when using a 'submit quick post' method.
+
 ## 3.0.2m (2025-08-03)
 * Fixed 'GOG Classic 2012' and 'Bright black' navigation bar themes' logos.
 * Improved 'GOG Classic 2012' navigation bar theme, according to its archive page.
