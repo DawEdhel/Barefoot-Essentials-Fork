@@ -6,7 +6,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2n
+// @version        3.0.2o
 // @updateURL      https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @downloadURL    https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @supportURL     https://github.com/DawEdhel/Barefoot-Essentials-Fork/issues
@@ -21,7 +21,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2n'
+var version = '3.0.2o'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -814,9 +814,13 @@ config = {
 		{"type": "choice", "options": ["fixed (normal)", "absolute"], "def": "fixed (normal)", "key": "navbar-position", "label": "Navigation bar position"},
         {"type": "choice", "options": ["Default theme", "Default without the stripe", "GOG Classic 2012", "GOG Classic 2014", "Bright black"], "def": "Bright black", "key": "navbar-logo", "label": "Navigation bar logo"},
 		{"type": "choice", "options": ["Default theme", "Default without the stripe", "GOG Classic 2012", "GOG Classic 2014", "Bright black"], "def": "Bright black", "key": "navbar-theme", "label": "Navigation bar theme"},	
-		{"type": "multibool", "options": {"GOG Galaxy": true, "GOG Downloader": true, "GOG Connect": true}, "key": "navbar-about-links", "label": "About menu links"},
+        {"type": "multibool", "options": {"GOG Galaxy": true, "GOG Downloader": false, "GOG Connect": false, "GOG Preservation Program": true, "GOG Patrons": true, "GOG One-click Mods": true}, "key": "navbar-about-links", "label": "About menu links"},
                 {"type": "multibool", "options": {"Blast from the Past": true, "Claim current giveaway": true, "Konami easter-egg": true}, "key": "navbar-about-gog-links", "label": "About menu GOG links"},
-		{"type": "multibool", "options": {"Facebook": true, "Twitter": true, "Twitch": true}, "key": "navbar-community-links", "label": "Community menu links"},	
+        {"type": "multibool", "options": {"Cloud saves": true}, "key": "navbar-about-galaxy-links", "label": "About menu Galaxy links"},
+		{"type": "multibool", "options": {"Facebook": true, "Twitter": true, "Twitch": true}, "key": "navbar-community-links", "label": "Community menu links"},
+        {"type": "multibool", "options": {"Refresh account data": true, "Refresh user data": true}, "key": "navbar-support-account-links", "label": "Support menu account links"},
+        {"type": "multibool", "options": {"Your year with GOG": false}, "key": "navbar-account-gog-links", "label": "Account menu GOG links"},
+        {"type": "multibool", "options": {"Your year with GOG": true, "Pick and play": true}, "key": "navbar-account-profile-links", "label": "Account menu profile links"},
 		{"type": "bool", "def": false, "key": "nav-display-notifications", "label": "Display notification for forum replies and chat"},	
 		{"type": "bool", "def": false, "key": "nav-display-updates", "label": "Display notification for new game updates"},
 		{"type": "choice", "options": ["GOG.com", "GOG Galaxy", "GOG Connect", "GOG Downloader"], "def": "GOG.com", "key": "navbar-about-menu-link", "label": "Clicking on \"About\" takes you to a page about"},	
@@ -829,6 +833,20 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2o",
+		"date": "2026-02-15",
+        "changes": [
+			"Fixed navigation bar classic themes' background.",
+			"Revised various navigation bar links:",
+			" - GOG Downloader/Connect links are now hidden by default (current users should turn off these manually);",
+			" - Added galaxy 'cloud saves' link to about galaxy submenu;",
+			" - Added ability to show/hide preservation/patrons/mods links;",
+			" - Added refresh account/user links to support account submenu;",
+			" - 'Your year with GOG' account link is now hidden by default;",
+			" - Added 'Your year with GOG', 'Pick and play' links to account profile submenu;",
+        ]
+	},
 	{
 		"version": "3.0.2n",
 		"date": "2025-10-30",
@@ -4366,7 +4384,7 @@ function feature_navbar_theme() {
 					"body .menu {"
 					+"	top: -4px;"
 					+"}"
-					+"body .menu::before {"
+					+"body nav[gog-menu].menu > div.menu-background {"
 					+"	background: linear-gradient(to bottom, #c4c4c4, #c4c4c4 4px, #9b9b9b);"
 					+"}"
 					+"body .menu-link {"
@@ -4414,7 +4432,7 @@ function feature_navbar_theme() {
 					"body .menu {"
 					+"	top: -4px;"
 					+"}"
-					+"body .menu::before {"
+					+"body nav[gog-menu].menu > div.menu-background {"
 					+"	background: #E1E1E1;"
 					+"}"
 					+"body .menu-link__dropdown-icon {"
@@ -4478,98 +4496,133 @@ function feature_navbar_theme() {
 }
 function feature_nav_about_links() {
 
-        function on_about_update(value) {
+	function on_about_update(value) {
 
-                    galaxy.toggle(value["GOG Galaxy"]);
-                downloader.toggle(value["GOG Downloader"]);
-		   connect.toggle(value["GOG Connect"]);
+                      galaxy.toggle(value["GOG Galaxy"]);
+		          downloader.toggle(value["GOG Downloader"]);
+		             connect.toggle(value["GOG Connect"]);
+        preservation_program.toggle(value["GOG Preservation Program"]);
+                     patrons.toggle(value["GOG Patrons"]);
+              one_click_mods.toggle(value["GOG One-click Mods"]);
 
-                separator.toggle(value["GOG Galaxy"]
-                              || value["GOG Downloader"]
-                              || value["GOG Connect"]);
+		           //separator.toggle(value["GOG Galaxy"]
+                   //              || value["GOG Downloader"]
+                   //              || value["GOG Connect"]);
 
 	}
 	function on_about_gog_update(value) {
 
-                blastfromthepast.toggle(value["Blast from the Past"]);
-	    claimcurrentgiveaway.toggle(value["Claim current giveaway"]);
-                 konamieasteregg.toggle(value["Konami easter-egg"]);
+            blastfromthepast.toggle(value["Blast from the Past"]);
+		claimcurrentgiveaway.toggle(value["Claim current giveaway"]);
+		     konamieasteregg.toggle(value["Konami easter-egg"]);
 
-                var about_gog_visible = value["Blast from the Past"]
-                             	     || value["Claim current giveaway"]
-                                     || value["Konami easter-egg"];
-                about_gog_arrow.toggle(about_gog_visible);
+        var about_gog_visible = value["Blast from the Past"]
+                             || value["Claim current giveaway"]
+                             || value["Konami easter-egg"];
+        about_gog_arrow.toggle(about_gog_visible);
+        if (about_gog_visible) {
+            special_links_submenu_about_gog.   addClass("BE-special-links-submenu");
+        }
+        else {
+            special_links_submenu_about_gog.removeClass("BE-special-links-submenu");
+        }
 
-                if (about_gog_visible) {
-                        about_gog_special_links_submenu.   addClass("BE-about-gog-special-links-submenu");
-                }
-                else {
-                        about_gog_special_links_submenu.removeClass("BE-about-gog-special-links-submenu");
-                }
+        if (value["Konami easter-egg"] && isCurrentPageMainPage() && typeof window.loader === 'undefined') {
+            konami_script.appendTo(document.head);
+        }
 
-        	if (value["Konami easter-egg"] && isCurrentPageMainPage() && typeof window.loader === 'undefined') {
-           		konami_script.appendTo(document.head);
-       		}
+	}
+	function on_about_galaxy_update(value) {
+
+        cloud_saves.toggle(value["Cloud saves"]);
+
+        var about_galaxy_visible = value["Cloud saves"];
+        about_galaxy_arrow.toggle(about_galaxy_visible);
+        if (about_galaxy_visible) {
+            special_links_submenu_about_galaxy.   addClass("BE-special-links-submenu");
+        }
+        else {
+            special_links_submenu_about_galaxy.removeClass("BE-special-links-submenu");
+        }
+
 	}
 
-	var about_gog_styles = $('<style>').text(`
-.BE-about-gog-special-links-submenu {
+	var special_links_submenu_styles = $('<style>').text(`
+.BE-special-links-submenu {
     display: none;
     position: absolute;
     left: 100%;
     min-width: 100%;
     width: max-content;
-    top: -8px;
+    top: -5px;
     background: var(--c-background);
     padding: 5px 0px;
 }
-.BE-about-gog-link:hover .BE-about-gog-special-links-submenu {
+.BE-special-link-arrow-hover:hover .BE-special-links-submenu {
     display: block;
 }
-.BE-about-gog-special-links-submenu > .menu-submenu-item.menu-submenu-item--hover[style] > .menu-submenu-link.BE-about-gog-special-link {
+.BE-special-links-submenu > .menu-submenu-item.menu-submenu-item--hover[style] > .menu-submenu-link.BE-special-link {
     background: var(--c-background) !important;
     padding-right: 5px !important;
 }
-.BE-about-gog-special-links-submenu > .menu-submenu-item.menu-submenu-item--hover[style] > .menu-submenu-link.BE-about-gog-special-link:hover {
+.BE-special-links-submenu > .menu-submenu-item.menu-submenu-item--hover[style] > .menu-submenu-link.BE-special-link:hover {
     background: var(--c-background-secondary) !important;
 }`).appendTo(document.head);
 
-    	var konami_script = $('<script type="text/javascript" src="//www4-static.gog-statics.com/js/konami/dist/bundle.js">');
+    var konami_script = $('<script type="text/javascript" src="//www4-static.gog-statics.com/js/konami/dist/bundle.js">');
 
-        var about_menu = $('.js-menu-about');
-        var about_gog_link = about_menu.find('a.menu-submenu-link[href*="/about_gog"]');
-        var about_gog_div = about_gog_link.parent();
+    // about links
+	var about_menu = $('.js-menu-about');
 
-
-        var about_gog_arrow = $('<svg viewBox="0 0 32 32" class="menu-submenu-icon"><use xlink:href="#icon-arrow-right4"></use></svg>').hide();
-        about_gog_link.append(about_gog_arrow);
-        about_gog_div.addClass("BE-about-gog-link");
-        var about_gog_special_links_submenu = $('<div>');
-        about_gog_div.append(about_gog_special_links_submenu);
-
-        var blastfromthepast = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
-          .append($('<a class="menu-submenu-link BE-about-gog-special-link" href="/blastfromthepast">').text("Blast from the Past"))
-          .appendTo(about_gog_special_links_submenu);
-    	var claimcurrentgiveaway = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
-      	  .append($('<a class="menu-submenu-link BE-about-gog-special-link" href="/giveaway/claim" target="_blank">').text("Claim current giveaway"))
-      	  .appendTo(about_gog_special_links_submenu);
-        var konamieasteregg = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
-          .append($('<a class="menu-submenu-link BE-about-gog-special-link" onclick="window.loader.loadAllAssets();">').text("Konami easter-egg (main page only)"))
-          .appendTo(about_gog_special_links_submenu);
-
-
-	var galaxy     = about_menu.find('a.menu-submenu-link[href="/galaxy"]').parent();
 	var downloader = $('<div class="menu-submenu-item menu-submenu-item--hover">');
-	var connect    = $('<div class="menu-submenu-item menu-submenu-item--hover">');
-	var separator  = galaxy.nextAll('.menu-submenu-separator');
+    var    connect = $('<div class="menu-submenu-item menu-submenu-item--hover">');
+    var               galaxy = about_menu.find('a.menu-submenu-link[href="/galaxy"]'                   ).parent();
+	var preservation_program = about_menu.find('a.menu-submenu-link[href*="/gog-preservation-program"]').parent();
+	var              patrons = about_menu.find('a.menu-submenu-link[href*="/patrons"]'                 ).parent();
+	var       one_click_mods = about_menu.find('a.menu-submenu-link[href*="/mods"]'                    ).parent();
+	//var separator = galaxy.next('.menu-submenu-separator');
 
 	connect   .hide().append($('<a class="menu-submenu-link" href="/connect">'   ).text("GOG Connect"   )).insertAfter(galaxy);
 	downloader.hide().append($('<a class="menu-submenu-link" href="/downloader">').text("GOG Downloader")).insertAfter(galaxy);
 
 
-        setTimeout(settings.onchange.bind(settings, 'navbar-about-links'    , on_about_update    ), 1);
-        setTimeout(settings.onchange.bind(settings, 'navbar-about-gog-links', on_about_gog_update), 1);
+    // about gog links
+    var about_gog_link  = about_menu.find('a.menu-submenu-link[href*="/about_gog"]');
+    var about_gog_div   = about_gog_link.parent();
+    var about_gog_arrow = $('<svg viewBox="0 0 32 32" class="menu-submenu-icon"><use xlink:href="#icon-arrow-right4"></use></svg>').hide();
+    about_gog_link.append(about_gog_arrow);
+    about_gog_div.addClass("BE-special-link-arrow-hover");
+    var special_links_submenu_about_gog = $('<div>');
+    about_gog_div.append(special_links_submenu_about_gog);
 
+    var blastfromthepast = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/blastfromthepast" target="_blank">').text("Blast from the Past"))
+      .appendTo(special_links_submenu_about_gog);
+    var claimcurrentgiveaway = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/giveaway/claim" target="_blank">').text("Claim current giveaway"))
+      .appendTo(special_links_submenu_about_gog);
+    var konamieasteregg = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" onclick="window.loader.loadAllAssets();">').text("Konami easter-egg (main page only)"))
+      .appendTo(special_links_submenu_about_gog);
+
+
+    // about galaxy links
+    var about_galaxy_link  = about_menu.find('a.menu-submenu-link[href*="/galaxy"]');
+    var about_galaxy_div   = about_galaxy_link.parent();
+    var about_galaxy_arrow = $('<svg viewBox="0 0 32 32" class="menu-submenu-icon"><use xlink:href="#icon-arrow-right4"></use></svg>').hide();
+    about_galaxy_link.append(about_galaxy_arrow);
+    about_galaxy_div.addClass("BE-special-link-arrow-hover");
+    var special_links_submenu_about_galaxy = $('<div>');
+    about_galaxy_div.append(special_links_submenu_about_galaxy);
+
+    var cloud_saves = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/account/cloud-saves" target="_blank">').text("Cloud saves"))
+      .appendTo(special_links_submenu_about_galaxy);
+
+
+    setTimeout(settings.onchange.bind(settings, 'navbar-about-links'       , on_about_update       ), 1);
+    setTimeout(settings.onchange.bind(settings, 'navbar-about-gog-links'   , on_about_gog_update   ), 1);
+    setTimeout(settings.onchange.bind(settings, 'navbar-about-galaxy-links', on_about_galaxy_update), 1);
 }
 function feature_nav_community_links() {
 
@@ -4591,6 +4644,95 @@ function feature_nav_community_links() {
 
 	setTimeout(settings.onchange.bind(settings, 'navbar-community-links', on_update), 1)
 
+}
+function feature_nav_support_links() {
+
+	function on_support_account_update(value) {
+
+        refresh_account_data.toggle(value["Refresh account data"]);
+        refresh_user_data   .toggle(value["Refresh user data"]);
+
+        var support_account_visible = value["Refresh account data"]
+                                   || value["Refresh user data"];
+        support_account_arrow.toggle(support_account_visible);
+        if (support_account_visible) {
+            special_links_submenu_support_account.   addClass("BE-special-links-submenu");
+        }
+        else {
+            special_links_submenu_support_account.removeClass("BE-special-links-submenu");
+        }
+
+	}
+
+    // support account links
+	var support_menu = $('.js-menu-support');
+
+    var support_account_link  = support_menu.find('div.menu-submenu-item[hook-test="communityMenu-account-and-website"] > a.menu-submenu-link');
+    var support_account_div   = support_account_link.parent();
+    var support_account_arrow = $('<svg viewBox="0 0 32 32" class="menu-submenu-icon"><use xlink:href="#icon-arrow-right4"></use></svg>').hide();
+    support_account_link.append(support_account_arrow);
+    support_account_div.addClass("BE-special-link-arrow-hover");
+    var special_links_submenu_support_account = $('<div>');
+    support_account_div.append(special_links_submenu_support_account);
+
+    var refresh_account_data = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/account/refresh" target="_blank">').text("Refresh account data"))
+      .appendTo(special_links_submenu_support_account);
+    var refresh_user_data = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/user/refresh" target="_blank">').text("Refresh user data"))
+      .appendTo(special_links_submenu_support_account);
+
+
+    setTimeout(settings.onchange.bind(settings, 'navbar-support-account-links', on_support_account_update), 1);
+}
+function feature_nav_account_links() {
+
+	function on_account_update(value) {
+
+        your_year_gog.toggle(value["Your year with GOG"]);
+
+	}
+	function on_account_profile_update(value) {
+
+        your_year_profile.toggle(value["Your year with GOG"]);
+            pick_and_play.toggle(value["Pick and play"]);
+
+        var account_profile_visible = value["Your year with GOG"]
+                                   || value["Pick and play"];
+        account_profile_arrow.toggle(account_profile_visible);
+        if (account_profile_visible) {
+            special_links_submenu_account_profile.   addClass("BE-special-links-submenu");
+        }
+        else {
+            special_links_submenu_account_profile.removeClass("BE-special-links-submenu");
+        }
+
+	}
+
+    // account links
+	var account_menu = $('.js-menu-account');
+
+    var your_year_gog = account_menu.find('a.menu-submenu-link[href="/year"]').parent();
+
+    // account profile links
+    var account_profile_link  = account_menu.find('a.menu-submenu-link[hook-test="menuAccountProfile"]');
+    var account_profile_div   = account_profile_link.parent();
+    var account_profile_arrow = $('<svg viewBox="0 0 32 32" class="menu-submenu-icon"><use xlink:href="#icon-arrow-right4"></use></svg>').hide();
+    account_profile_link.append(account_profile_arrow);
+    account_profile_div.addClass("BE-special-link-arrow-hover");
+    var special_links_submenu_account_profile = $('<div>');
+    account_profile_div.append(special_links_submenu_account_profile);
+
+    var your_year_profile = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/year" target="_blank">').text("Your year with GOG"))
+      .appendTo(special_links_submenu_account_profile);
+    var pick_and_play = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/pick-and-play" target="_blank">').text("Pick and play"))
+      .appendTo(special_links_submenu_account_profile);
+
+
+    setTimeout(settings.onchange.bind(settings, 'navbar-account-gog-links'    , on_account_update        ), 1);
+    setTimeout(settings.onchange.bind(settings, 'navbar-account-profile-links', on_account_profile_update), 1);
 }
 function feature_nav_display_notifications() {
 
@@ -5095,6 +5237,8 @@ if (location.hostname == 'www.gog.com') {
 		feature_navbar_theme();
 		feature_nav_about_links();
 		feature_nav_community_links();
+        feature_nav_support_links();
+        feature_nav_account_links();
 		feature_nav_display_notifications();
 		feature_nav_display_updates();
 		feature_nav_menu_links();
@@ -5162,4 +5306,5 @@ if (location.hostname == 'www.gog.com') {
 		})
 	})
 }
+
 
