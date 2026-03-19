@@ -6,7 +6,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2o
+// @version        3.0.2p
 // @updateURL      https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @downloadURL    https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @supportURL     https://github.com/DawEdhel/Barefoot-Essentials-Fork/issues
@@ -21,7 +21,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2o'
+var version = '3.0.2p'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -777,12 +777,14 @@ config = {
 		{"type": "bool", "def": true, "key": "forum-embed-videos", "label": "Video frames on posts with YouTube video links"},
 		{"type": "bool", "def": true, "key": "forum-bold-text", "label": "enhanced bold text"},
 		{"type": "choice", "options": ["square", "rounded corners", "circle"], "def": "square", "key": "forum-avatar-style", "label": "Avatar style"},
-		{"type": "bool", "def": true, "key": "forum-detect-necro", "label": "Detect \"necroposts\"", "comment": "This option scans forum topics for posts made more than 30 days after the previous post, and visibly labels them."},	
-		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group above favourites", "key": "forum-group-delistings", "label": "delisting topics (page refresh required)"},
-       		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and expand", "key": "forum-group-news", "label": "news topics (page refresh required)"},
-       		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group below other topics", "key": "forum-group-giveaways", "label": "giveaway topics (page refresh required)"},
-       		{"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group below other topics", "key": "forum-group-forumgames", "label": "forum game topics (page refresh required)"},
-       	        {"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and collapse", "key": "forum-group-spams", "label": "spam topics (page refresh required)"},
+		{"type": "bool", "def": true, "key": "forum-detect-necro", "label": "Detect \"necroposts\"", "comment": "This option scans forum topics for posts made more than 30 days after the previous post, and visibly labels them."},
+        {"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group above favourites", "key": "forum-group-delistings", "label": "delisting topics (page refresh required)"},
+        {"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and expand", "key": "forum-group-stickies", "label": "sticky topics (page refresh required)"},
+        {"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and expand", "key": "forum-group-news", "label": "news topics (page refresh required)"},
+        {"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and expand", "key": "forum-group-giveaways", "label": "giveaway topics (page refresh required)"},
+        {"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and expand", "key": "forum-group-forumgames", "label": "forum game topics (page refresh required)"},
+        {"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and expand", "key": "forum-group-spams", "label": "spam topics (page refresh required)"},
+        {"type": "choice", "options": ["leave as they are", "group and collapse", "group and expand", "group above favourites", "group below other topics", "hide"], "def": "group and expand", "key": "forum-group-heavily-discussed", "label": "heavily discussed topics (page refresh required)"},
 		{"type": "bool", "def": true, "key": "forum-move-edit-note", "label": "restyle \"post edited\" note on edited posts"},	
 		{"type": "bool", "def": false, "key": "forum-move-online-offline-status", "label": "Move online/offline status to its original position"},	
 		{"type": "bool", "def": false, "key": "forum-old-gog-avatar", "label": "Replace the official \"GOG.com\" user's avatar with old green-and-yellow GOG logo"},	
@@ -802,37 +804,60 @@ config = {
 		{"type": "choice", "options": ["light"], "def": "light", "key": "BE-style", "label": "Barefoot Essentials style"},
 		{"type": "bool", "def": true, "key": "connect-autocheck", "label": "Automatically check for GOG Connect offers"},
 		{"type": "choice", "options": ["current", "v1", "v2", "v3"], "def": "v1", "key": "favicon", "label": "Favicon"},
-		{"type": "multibool", "options": {"GOG Database": true, "PCGamingWiki": true, "Wikipedia": true}, "def": "GOG.com", "key": "gamecard-additional-information-links", "label": "Additional information links"},		
+        {"type": "multibool", "options": {"GOG Database": true, "Gamesieve": true, "Steam Database": true, "PCGamingWiki": true, "Wikipedia": true}, "def": "GOG.com", "key": "gamecard-additional-information-links", "label": "Additional information links"},	
 		{"type": "bool", "def": true, "key": "gamecard-show-descriptions", "label": "Automatically expand game and movie descriptions"},
                 {"type": "bool", "def": true, "key": "gamecard-compact-hltb-section", "label": "Compact the HowLongToBeat section"},
         {"type": "bool", "def": true, "key": "gamecard-autocancel-new-review-form", "label": "Autocancel the new review form on page load"},
                 {"type": "bool", "def": true, "key": "main-page-move-compacted-news-section-to-the-top", "label": "Move compacted news section to the top of the main page"},
 	],
 	"Navigation bar": [
-		{"type": "multibool", "options": {"Alerts": false, "Friends": false, "Wishlist": false}, "key": "nav-hide-icons", "label": "Hide notification icons"},
-		{"type": "bool", "def": true, "key": "nav-hide-overlay", "label": "Remove the dark menu overlay"},
-		{"type": "choice", "options": ["fixed (normal)", "absolute"], "def": "fixed (normal)", "key": "navbar-position", "label": "Navigation bar position"},
+        {"type": "choice", "options": ["fixed (normal)", "absolute"], "def": "fixed (normal)", "key": "navbar-position", "label": "Navigation bar position"},
         {"type": "choice", "options": ["Default theme", "Default without the stripe", "GOG Classic 2012", "GOG Classic 2014", "Bright black"], "def": "Bright black", "key": "navbar-logo", "label": "Navigation bar logo"},
-		{"type": "choice", "options": ["Default theme", "Default without the stripe", "GOG Classic 2012", "GOG Classic 2014", "Bright black"], "def": "Bright black", "key": "navbar-theme", "label": "Navigation bar theme"},	
+        {"type": "choice", "options": ["Default theme", "Default without the stripe", "GOG Classic 2012", "GOG Classic 2014", "Bright black"], "def": "Bright black", "key": "navbar-theme", "label": "Navigation bar theme"},
+        {"type": "bool", "def": true, "key": "nav-hide-overlay", "label": "Remove the dark menu overlay"},
+        {"type": "bool", "def": false, "key": "nav-display-notifications", "label": "Display BE notification for forum replies and chat"},
+        {"type": "bool", "def": false, "key": "nav-display-updates", "label": "Display BE notification for new game updates"},
+        {"type": "multibool", "options": {"Activity feed": false, "Forum replies": false}, "key": "nav-hide-notification-dot", "label": "Hide GOG notification dot for"},
+		{"type": "multibool", "options": {"Alerts": false, "Friends": false, "Wishlist": false, "Download Galaxy": false}, "key": "nav-hide-icons", "label": "Hide notification icons"},
+        {"type": "choice", "options": ["GOG.com", "GOG Galaxy", "GOG Connect", "GOG Downloader"], "def": "GOG.com", "key": "navbar-about-menu-link", "label": "Clicking on \"About\" takes you to a page about"},
         {"type": "multibool", "options": {"GOG Galaxy": true, "GOG Downloader": false, "GOG Connect": false, "GOG Preservation Program": true, "GOG Patrons": true, "GOG One-click Mods": true}, "key": "navbar-about-links", "label": "About menu links"},
-                {"type": "multibool", "options": {"Blast from the Past": true, "Claim current giveaway": true, "Konami easter-egg": true}, "key": "navbar-about-gog-links", "label": "About menu GOG links"},
-        {"type": "multibool", "options": {"Cloud saves": true}, "key": "navbar-about-galaxy-links", "label": "About menu Galaxy links"},
-		{"type": "multibool", "options": {"Facebook": true, "Twitter": true, "Twitch": true}, "key": "navbar-community-links", "label": "Community menu links"},
+        {"type": "multibool", "options": {"Blast from the Past": true, "Claim current giveaway": true, "Konami easter-egg": true}, "key": "navbar-about-gog-links", "label": "About menu GOG links"},
+        {"type": "multibool", "options": {"Download Galaxy 1.2": true, "Download Galaxy 2.0": true, "Cloud saves": true}, "key": "navbar-about-galaxy-links", "label": "About menu Galaxy links"},
+        {"type": "multibool", "options": {"GOG Patrons Hub": true, "GOG Patrons Amount": true}, "key": "navbar-about-patrons-links", "label": "About menu patrons links"},
+        {"type": "choice", "options": ["All forums", "General forum", "Forum replies", "Chat", "Friends"], "def": "All forums", "key": "navbar-community-menu-link", "label": "Clicking on \"Community\" takes you to"},
+        {"type": "multibool", "options": {"General discussion forum": false, "Forum replies": false, "GOG Patrons Hub": false, "Facebook": true, "Twitter": true, "Twitch": true}, "key": "navbar-community-links", "label": "Community menu links"},
+        {"type": "multibool", "options": {"General discussion forum": true, "GOG GALAXY forum": true, "Forum replies/My posts": true, "My questions": true, "My forum settings": true}, "key": "navbar-community-forums-links", "label": "Community menu forums links"},
         {"type": "multibool", "options": {"Refresh account data": true, "Refresh user data": true}, "key": "navbar-support-account-links", "label": "Support menu account links"},
-        {"type": "multibool", "options": {"Your year with GOG": false}, "key": "navbar-account-gog-links", "label": "Account menu GOG links"},
+        {"type": "choice", "options": ["Activity feed", "Profile", "Games library"], "def": "Activity feed", "key": "navbar-account-menu-link", "label": "Clicking on your account takes you to your"},
+        {"type": "bool", "def": true, "key": "navbar-account-header-add-username-back", "label": "Add back username to account header"},
+        {"type": "multibool", "options": {"Your year with GOG": false, "GOG Patrons Hub": false}, "key": "navbar-account-links", "label": "Account menu links"},
         {"type": "multibool", "options": {"Your year with GOG": true, "Pick and play": true}, "key": "navbar-account-profile-links", "label": "Account menu profile links"},
-		{"type": "bool", "def": false, "key": "nav-display-notifications", "label": "Display notification for forum replies and chat"},	
-		{"type": "bool", "def": false, "key": "nav-display-updates", "label": "Display notification for new game updates"},
-		{"type": "choice", "options": ["GOG.com", "GOG Galaxy", "GOG Connect", "GOG Downloader"], "def": "GOG.com", "key": "navbar-about-menu-link", "label": "Clicking on \"About\" takes you to a page about"},	
-		{"type": "choice", "options": ["All forums", "General forum", "Forum replies", "Chat", "Friends"], "def": "All forums", "key": "navbar-community-menu-link", "label": "Clicking on \"Community\" takes you to"},		
-		{"type": "choice", "options": ["Activity feed", "Profile", "Games library"], "def": "Activity feed", "key": "navbar-account-menu-link", "label": "Clicking on your account takes you to your"},	
-		{"type": "multibool", "options": {"Activity feed": false, "Forum replies": false}, "key": "nav-hide-notification-dot", "label": "Hide notification dot for"},
 	],
 	"Promotions": [
 		{"type": "bool", "def": true, "key": "promo-show-discount", "label": "Display discount % on promo pages"},
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2p",
+		"date": "2026-03-19",
+        "changes": [
+			"Hidden navbar account 'Patrons hub' link by default.",
+			"Hidden navbar community 'Patrons hub' link by default.",
+            "Added about patrons hub link.",
+            "Added about patrons amount link. (thanks to @Palestine)",
+            "Added about galaxy installers links.",
+            "Added galaxy icon option to be shown/hidden.",
+            "Added show username in account header option.",
+            "Fixed account username notification icons.",
+            "Added community forums submenu with various links.",
+            "Added sticky topics forum group.",
+            "Added heavily discussed topics forum group.",
+            "Added gamesieve/steamdb links to gamecards.",
+            "Grouped together similar gamecard links.",
+			"Reordered navbar settings for better clarity.",
+        ]
+	},
 	{
 		"version": "3.0.2o",
 		"date": "2026-02-15",
@@ -2556,7 +2581,6 @@ function feature_forum_detect_necro() {
 	setTimeout(settings.onchange.bind(settings, 'forum-detect-necro', on_update), 1)
 
 }
-
 function feature_forum_group_delistings() {
 
 	function on_update(value) {
@@ -2637,7 +2661,7 @@ function feature_forum_group_delistings() {
 
 	var delisting_count = 0
 
-	$('#t_norm').find('div.topic_s>a').each(function() {
+	$('#t_norm').find('div.topic_s > a:visible').each(function() {
 		if (/delisting:/i.test(this.text)) {
 			var row = $(this).closest('.list_row_odd')
 			row.clone().appendTo(list)
@@ -2662,6 +2686,111 @@ function feature_forum_group_delistings() {
 	var style = $('<style>').appendTo(document.head)
 
 	settings.onchange('forum-group-delistings', on_update)
+
+}
+function feature_forum_group_stickies() {
+
+	function on_update(value) {
+
+        if (value == 'group above favourites') {
+			sticky_topics.remove().insertBefore($('#t_fav'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo($('#t_norm'))
+		}
+		else if (value == 'group below other topics') {
+			sticky_topics.remove().insertAfter($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo(sticky_topics)
+		} else {
+			sticky_topics.remove().insertBefore($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo($('#t_norm'))
+		}
+
+		switch (value) {
+			case 'hide':
+				style.text(
+					'.BE-sticky-topics, .BE-sticky-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				break
+			case 'group and collapse':
+				style.text(
+					'.BE-sticky-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-sticky-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				sticky_topics.children('.list_row_h').hide()
+				break
+			case 'group above favourites':
+			case 'group and expand':
+			case 'group below other topics':
+				style.text(
+					'.BE-sticky-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-sticky-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				sticky_topics.children('.list_row_h').show()
+				break
+			default:
+				style.text(
+					'.BE-sticky-topics {'
+					+	'display: none;'
+					+'}'
+					+'.BE-sticky-topic {'
+					+	'display: block;'
+					+'}'
+				)
+		}
+	}
+
+	var style = $('<style>').appendTo(document.head);
+	var setting = settings.get('forum-group-stickies');
+
+	var sticky_topics = $('<div class="favourite_h BE-sticky-topics">');
+	var list = $('<div class="list_row_h">');
+	var sticky_count = 0;
+
+	$('#t_norm').find('div.topic_s > a:visible').each(function() {
+		if (/sticky:/i.test(this.text)) {
+			var row = $(this).closest('.list_row_odd');
+			row.clone().appendTo(list);
+			row.addClass('BE-sticky-topic');
+			sticky_count += 1;
+		}
+	})
+
+	if (sticky_count > 0) {
+
+		var bar = $('<div class="list_bar_h">')
+		  .append(
+              // https://www.flaticon.com/free-icon/sticky-notes_3209265
+		  	  $('<div class="lista_icon_3">').attr('style', 'background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAsQAAALEBxi1JjQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAASTSURBVEiJpVRrTFNnGH7Otee0B9rSUrkp0M0WVp0yYEpRVJASDGxjbn9wEl3cD+/OZVvY5oyJM8uM2RKNxnhJFsa2fyxTlCAo4sLiCCMqIOLAGcANtePW9vR2ztkPlUjpwV2eX9953/d7nu/5vve8wP+DIZ7TXeIpxmvS8C0AjJEF1Cyb0wCwALwq+bkaij6x2Z69qrl4PecOikk9Y27BL4cbni4i1dj1sdwFQyw/YNRr78QK/GEAJQC0j9MLDYzmRhIvlOSZU1iSILDUnMKyJJE2y4GnwRJn0E4qfV8qNxuqlcN7XpcL8+aP6rSs1xIndGoZ5vppZ7l8yVWlJPGCuNWeKxpZbhxAQSQRrSJQVJxvUwAgw2pBhtVCbFu/3BCWZFy9dnfxJ4fOBXxSWFk5J5U4X1TJ5Zw7KYVkeR2A1kiiqG9gNuo+3Vm1IutFe9K0OEkSmJdoRP+gm95b36xc9973Hu3vCM+3W8KKgnIAuwWeWSwGwl4A/aoOAkGpsCjPpnp/8XE6dJ//kOzoGhJ2JejhfCkdADA8Mo6v69orD568mD82IaapCdjMRi2dEB8DWVYgKwpoanov7Kh6dNXPzTNPiyfP0cNk4BWGRMeU60h2kiRd5YULWACob+lBUv5evLr5FA7XXMHN/hFVV09wpumaF4oUevI9w4HJqF1bWpDJA8DzqWbcbKhGZ88Qmtr6sP79WtwbGceyHCtWO21YsyITKQmGqb2SJONKx++chiagJkB7fcGc5blWAMCh0y04c7ELjvkJKM6349i+N5CSYEDL1d/Q1NaHA8cuQB/DY3vVcmx6cyl+7RnCpC9Ea2JZVYHcDKslpONZDAy6UVqQgQO712DwjzE0tfXho0P16OwZRtYLyVjttGFLZT5iBA4+MQgAaLzSK2Wm6ogHo6HoAhxHl1YULxQAIBSW8ENTF3bur8PcRAMu127HxrVLoOWZKQdVH3wLfyCESzVbAQBnm6+JrlyTUNv4Z3SBGF5T4VqWwQCAPd2CmoPrAAB3h0fBMhSOf9+G995eibJVDpStcgAAHvzlgdmog08MovfOQ82OChvUBHT+YDg925GCSKQmPxqSe7a6ZuTi4wQAQGv7AF7OjPXTFME8nX+6TVc6s60hilKdf7OiobU7UOY06SLjU2x6gXvltSKH/j+xA2i43C25ckwz/6upBUW4JjwBYuTh5D8ivO/2oPGnW/CKQdx3ezDuESn7PO2Muqk3GB0Xt31xonnD/qMXCs1GLVVemKkpLVjAFeRaoeXZGRuPfNMa+u7HX2T3eIA0xPJSYZZRAqBRFQBQ7x7z1QMAlNCpwTu3N37Ve2uy8t0JzpZm8pcVLeJdyzLpbEcKKIrE2Ytdgd1vLRJO1HX7BFaWP3vHKkRzGnWaUiTENUtNxKay5JiwpKC9d4JpbL8d2vLxz56Be6ImLyvVf6NvRPj89Kj/yC47X+6MJ6LxqApMK6AI5Dn0yHPomb0b0hmPKKGlc5SpWGJHVUkixzKzd90zBSIh8BTKnOZnFz5GVGsCR+8LhKVqmiKkf3sASQKlZYnjYz5pOwD8DTWVkSTEwaqDAAAAAElFTkSuQmCC") no-repeat scroll 0px 0px transparent; background-size: contain;'),
+		  	  $('<div class="lista_bar_text">').text("Topics which appear to be sticky (" + sticky_count + ")")
+		  )
+		  .css('cursor', 'pointer');
+
+		sticky_topics
+		  .append(bar, list);
+	}
+
+	settings.onchange('forum-group-stickies', on_update);
 
 }
 function feature_forum_group_news() {
@@ -2744,7 +2873,7 @@ function feature_forum_group_news() {
 
 	var news_count = 0
 
-	$('#t_norm').find('div.topic_s>a').each(function() {
+	$('#t_norm').find('div.topic_s > a:visible').each(function() {
 		if (/news:/i.test(this.text)) {
 			var row = $(this).closest('.list_row_odd')
 			row.clone().appendTo(list)
@@ -2851,7 +2980,7 @@ function feature_forum_group_giveaways() {
 
 	var giveaway_count = 0
 
-	$('#t_norm').find('div.topic_s>a').each(function() {
+	$('#t_norm').find('div.topic_s > a:visible').each(function() {
 		if (/giveaway/i.test(this.text)) {
 			var row = $(this).closest('.list_row_odd')
 			row.clone().appendTo(list)
@@ -2958,7 +3087,7 @@ function feature_forum_group_forumgames() {
 
 	var forumgame_count = 0
 
-	$('#t_norm').find('div.topic_s>a').each(function() {
+	$('#t_norm').find('div.topic_s > a:visible').each(function() {
 		if (/forum game/i.test(this.text)) {
 			var row = $(this).closest('.list_row_odd')
 			row.clone().appendTo(list)
@@ -3110,7 +3239,179 @@ function feature_forum_group_spams() {
 	settings.onchange('forum-group-spams', on_update)
 
 }
+function feature_forum_group_heavily_discussed() {
 
+	function on_update(value) {
+
+        if (value == 'group above favourites') {
+			heavily_discussed_topics.remove().insertBefore($('#t_fav'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo($('#t_norm'))
+		}
+		else if (value == 'group below other topics') {
+			heavily_discussed_topics.remove().insertAfter($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo(heavily_discussed_topics)
+		} else {
+			heavily_discussed_topics.remove().insertBefore($('#t_norm'))
+			.find('.list_bar_h')
+			.click(function() {
+				$(this).siblings('.list_row_h').slideToggle()
+			})
+			$('.list_bottom_bg').remove().appendTo($('#t_norm'))
+		}
+
+		switch (value) {
+			case 'hide':
+				style.text(
+					'.BE-heavily-discussed-topics, .BE-heavily-discussed-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				break
+			case 'group and collapse':
+				style.text(
+					'.BE-heavily-discussed-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-heavily-discussed-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				heavily_discussed_topics.children('.list_row_h').hide()
+				break
+			case 'group above favourites':
+			case 'group and expand':
+			case 'group below other topics':
+				style.text(
+					'.BE-heavily-discussed-topics {'
+					+	'display: block;'
+					+'}'
+					+'.BE-heavily-discussed-topic {'
+					+	'display: none;'
+					+'}'
+				)
+				heavily_discussed_topics.children('.list_row_h').show()
+				break
+			default:
+				style.text(
+					'.BE-heavily-discussed-topics {'
+					+	'display: none;'
+					+'}'
+					+'.BE-heavily-discussed-topic {'
+					+	'display: block;'
+					+'}'
+				)
+		}
+	}
+
+    function average(values) {
+
+        if ((values?.length || 0) === 0) {
+            return undefined;
+        }
+
+        return +(values.reduce((a, b) => a + b) / values.length).toFixed(2);
+
+    }
+    function median(values) {
+
+        if ((values?.length || 0) === 0) {
+            return undefined;
+        }
+
+        values = [...values].sort((a, b) => a - b);
+        const half = Math.floor(values.length / 2);
+
+        return (values.length % 2
+          ?  values[half]
+          : (values[half - 1] + values[half]) / 2
+        );
+
+    }
+
+	var style = $('<style>').appendTo(document.head);
+	var setting = settings.get('forum-group-heavily-discussed');
+
+	var heavily_discussed_topics = $('<div class="favourite_h BE-heavily-discussed-topics">');
+	var list = $('<div class="list_row_h">');
+	var heavily_discussed_count = 0;
+
+    // calculate average and median values
+    const all_topics_replies_amounts = $('#t_norm').find('div.list_row_odd > div.replies').map(function() { return parseInt(this.innerText, 10) }).get();
+    const all_topics_replies_amounts_average = average(all_topics_replies_amounts);
+    const all_topics_replies_amounts_median  = median (all_topics_replies_amounts);
+
+    // calculate average-median value
+    var heavily_discussed_replies_amount = 0;
+    if (all_topics_replies_amounts_average && all_topics_replies_amounts_median) {
+        heavily_discussed_replies_amount = average([
+            all_topics_replies_amounts_average,
+            all_topics_replies_amounts_median
+        ]);
+    }
+    else if (all_topics_replies_amounts_average) {
+        heavily_discussed_replies_amount = all_topics_replies_amounts_average;
+    }
+    else if (all_topics_replies_amounts_median) {
+        heavily_discussed_replies_amount = all_topics_replies_amounts_median;
+    }
+
+    const all_topics_container_header = $('#t_norm > div.list_bar_h');
+    const all_topics_container_header_title_avg_median_value_message = `Stats of all topics replies:\nAvg value: ${all_topics_replies_amounts_average}\nMedian value: ${all_topics_replies_amounts_median}\nAvg-median value: ${heavily_discussed_replies_amount}`;
+    if (all_topics_container_header.attr("title")) {
+        all_topics_container_header.attr("title", all_topics_container_header.attr("title") + `\n${all_topics_container_header_title_avg_median_value_message}`);
+    }
+    else {
+        all_topics_container_header.attr("title", all_topics_container_header_title_avg_median_value_message);
+    }
+
+    // ensure the calculated value within the defined range
+    const min_replies_amount = 3;
+    const max_replies_amount = 30;
+
+    if      (heavily_discussed_replies_amount < min_replies_amount) {
+        heavily_discussed_replies_amount = min_replies_amount;
+        all_topics_container_header.attr("title", all_topics_container_header.attr("title") + `\n\nApplied min value instead: ${min_replies_amount}`);
+    }
+    else if (heavily_discussed_replies_amount > max_replies_amount) {
+        heavily_discussed_replies_amount = max_replies_amount;
+        all_topics_container_header.attr("title", all_topics_container_header.attr("title") + `\n\nApplied max value instead: ${max_replies_amount}`);
+    }
+
+	$('#t_norm').find('div.list_row_odd:has(> div.topic_s > a:visible) > div.replies').each(function() {
+        const topic_reply_amount = Number($(this).text());
+		if (topic_reply_amount >= heavily_discussed_replies_amount) {
+			var row = $(this).closest('.list_row_odd');
+			row.clone().appendTo(list);
+			row.addClass('BE-heavily-discussed-topic');
+			heavily_discussed_count += 1;
+		}
+	})
+
+	if (heavily_discussed_count > 0) {
+
+		var bar = $('<div class="list_bar_h">')
+		  .append(
+              // https://www.flaticon.com/free-icon/meeting_7185645
+		  	  $('<div class="lista_icon_3">').attr('style', 'background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAACxAAAAsQHGLUmNAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABb9JREFUSImllWtwVPUZh59zzp49e78m5somgQBJJIQUk1BAosBUUDomaLURi4jQYEtRKb04nU5n2uJ4oXVsbTFoO9RyRyiUWkU6QGu1KUguDdhAIPfbJiS72d2z2c3ZSz9IHUoZyYzvp/fD+7zPzH9+/3lhkmW322vdTne3y+nqtlvt6yfLCZOcczvtjq7aR2vNAHW76lTfmN8DjN4KlCazPVWxPWG2Ge/r7usU29ovkohrQiwa79QSsXOfW5Cq2JYvTp/5psts0a2q+TJlxYUEu0alqWb3wr7AaIOWiLd/Fq+7rhcAB+ADFMAI+HNtrq88lb9IKs2dwdHGjwE48KVv0ejtdLYM9dyrBoZPAE4gDGjX+pEbBWkOm+Okotdnh9XguOLOilvcacLYUF9zIBxJtga9/PF8M+3hq0jIfDzaRZ41g/H4RObc4rR6s0nJ6xsMxr3ecZ3N5tALotTQN9i3+NMnctqdO6qXVy3O8+QpSjRsceTPtq5++R1r5vTZ+aeOvZ4vpwWEu0ptrKzI4osFNnTmINvPfIAzS5lR9/wyz9eqbze3XvRbdRMmc3lFpWFRxZ156kT48sDgQIvuk7cRHPF4nIamMzw4q5Bjw0EA+vY9y86184SynCyE6/I2NycFk11i23NL5cc3v826R0pQwxr3FBVxqPGfAHR0dDwC7BYAZFkuFaF+Tm6erIqKsGjzq9ivvEu10kjbUILdzV4eKHJxZ/5tiNdMy155D1GSKMtxoFlEntpQzuYf/JVYREy29PTGkoIwT9O0BhFA07TGqKatCsxcIix4/hR6i5PWk3ux6E3sONvP06++xfmUBaw++G+2f9jJpqMX0JmsOPQS3182B8MEmA0yR+oeorQ0RZiIxWo0TWu4MUUfjLadVUf8AfPI8Tq+WnQbV4bDZBeW4smdRu13f4zebMM/2MnWn25AVVVe3FKLUZZYUTCFQ4eusKbKRfOlARX4+81iOuC9+FHp6a0rj8ZHugu/UJ7BxaEYIYOJnq52puRMxeFK4fgf9tDT3UUoFCLFmUGfX2V6mp2nf/Uef65vazt3of8+wHszAQCSf4DC/BnJ5pBRaGlt4u7pKr/e9CCq3sHl7l727tvHrOJifr5tG2OBMfY1n+aJsiwighDvCcZ8N+4Tr+sz3C7331beW12o6I3ChdYm0lPd5Kc7eGlFAT+Z72CqXYfBaATg8bVr2fPm7/A4jbR5Ayx5tFJ65sC3y9Pz008D6TcTLMxOz3ImEgkSCNzhsfDcPVN5rDwPALfFwMb5Hrb/7AUAnC4XSyoXUpZp4a3WfoqrKtApOqbdke8CFvyPQJblUqPBsCsn06VraKnHkzmFoXE9I2oISNLrU3n22L8IROO0Nn/Extr1rHmomrHuNrp8IYatJtSREIe/uQv3qE42Ggx7ZFmeA9d+ssPq+E318qqCts4OceuWDRx8+13mVSxl94n3Merj/OjUIHGdkfM9wxhlif6rPrp6vdQUO/llcx81dU/ylxf/xA9Xr+Hw8ffFu+cvkTp7O7MjkcheESBJ0i+JErNmlvDG/qMgCExoGrkF5Xxn/zmmrXuNwYjEwyWZ3F+Uij8qUvnMa2za+w8KN9fQKziIGwy8sf8IxQVzEAUxmUwkfZ+myDfm23Lk+JHZil7xTGjjEUlSTN6rI7rx8fHm1BlzI7LRWhkIBPh9h4WkpGckMITeaMadPf2dD1/a7TK57SWhIX+std8flmWDITIR7fIH/N+D/79odiBwTawAoVW/Pf+YLq1gZ/hyPUqw55OhtCkIosjhF77xev+lpq8DFiAKxAAbMPbfhbc8mS5P0e0ZJXc1iaPtutrlZQDsPHGWcEL2XTpz8uFYVD3xWfykbrJidz6ZalJ+4bDZdQD+oF/zjgY3apHwjlux4q0GAKJjvgPqeCS6YmkVK5ZWoarRqBYJH5wMO+myW+3r3U5Xt9vp6rJb7esmy/0HtIg4Rjjk0/sAAAAASUVORK5CYII=") no-repeat scroll 0px 0px transparent; background-size: contain;'),
+		  	  $('<div class="lista_bar_text">').text("Topics which appear to be heavily discussed (" + heavily_discussed_count + ")")
+		  )
+		  .css('cursor', 'pointer');
+
+		heavily_discussed_topics
+		  .append(bar, list);
+	}
+
+	settings.onchange('forum-group-heavily-discussed', on_update);
+
+}
 function feature_forum_move_edit_note() {
 
 	function on_update(value) {
@@ -3950,15 +4251,38 @@ function feature_gamecard_additional_information_links() {
 		// 		)
 		// 	}
 		// }
+
+        const dbLinks = [];
 		if (value["GOG Database"]) {
-			list.append(
-				$("<li>").append(
-					$('<a target="_blank" class="details__link">')
-					.attr('href', "https://www.gogdb.org/product/"+gogData.cardProduct.id)
-					.text('GOG Database')
-				)
-			)
+            dbLinks.push($('<a target="_blank" class="details__link">')
+			  .attr('href', "https://www.gogdb.org/product/"+gogData.cardProduct.id)
+			  .text('GOGDB')
+              .prop('outerHTML')
+            );
 		}
+		if (value["Gamesieve"]) {
+            dbLinks.push($('<a target="_blank" class="details__link">')
+			  .attr('href', "https://gamesieve.com/?q=title%3A"+escape(gogData.cardProduct.title))
+			  .text('Gamesieve')
+              .prop('outerHTML')
+            );
+		}
+		if (value["Steam Database"]) {
+            dbLinks.push($('<a target="_blank" class="details__link">')
+			  .attr('href', "https://steamdb.info/search/?a=all&q="+escape(gogData.cardProduct.title))
+			  .text('SteamDB')
+              .prop('outerHTML')
+            );
+		}
+        if (dbLinks.length > 0) {
+            list.append(
+                $("<li>").append(
+                    (dbLinks.join("<span> | </span>"))
+                )
+            );
+        }
+
+        const wikiLinks = [];
 		// if (value["GOG Wiki"]) {
 		// 	list.append(
 		// 		$("<li>").append(
@@ -3969,23 +4293,26 @@ function feature_gamecard_additional_information_links() {
 		// 	)
 		// }
 		if (value["PCGamingWiki"]) {
-			list.append(
-				$("<li>").append(
-					$('<a target="_blank" class="details__link">')
-					.attr('href', "https://pcgamingwiki.com/wiki/"+escape(gogData.cardProduct.title))
-					.text('PCGamingWiki')
-				)
-			)
+            wikiLinks.push($('<a target="_blank" class="details__link">')
+			  .attr('href', "https://pcgamingwiki.com/wiki/"+escape(gogData.cardProduct.title))
+			  .text('PCGamingWiki')
+              .prop('outerHTML')
+            );
 		}
 		if (value["Wikipedia"]) {
-			list.append(
-				$("<li>").append(
-					$('<a target="_blank" class="details__link">')
-					.attr('href', "https://en.wikipedia.org/wiki/"+escape(gogData.cardProduct.title))
-					.text('Wikipedia')
-				)
-			)
+            wikiLinks.push($('<a target="_blank" class="details__link">')
+			  .attr('href', "https://en.wikipedia.org/wiki/"+escape(gogData.cardProduct.title))
+			  .text('Wikipedia')
+              .prop('outerHTML')
+            );
 		}
+        if (wikiLinks.length > 0) {
+            list.append(
+                $("<li>").append(
+                    (wikiLinks.join("<span> | </span>"))
+                )
+            );
+        }
 	}
 
 	var list = $("<ul>")
@@ -4110,24 +4437,30 @@ function feature_hide_menu_icons() {
 
 	function on_update(values) {
 		if (values.Alerts) {
-			$('.menu-notifications').hide()
+			$('.menu-notifications').hide();
 		} else {
-			$('.menu-notifications').show()
+			$('.menu-notifications').show();
 		}
 		if (values.Friends) {
-			$('.menu-friends').hide()
+			$('.menu-friends').hide();
 		} else {
-                        $('.menu-friends').show()
+			$('.menu-friends').show();
 		}
-                if (values.Wishlist) {
-                        $("div.menu-tray > div.menu-item.menu-wishlist.has-submenu.js-menu-wishlist").hide();
-                }
-                else {
-                        $("div.menu-tray > div.menu-item.menu-wishlist.has-submenu.js-menu-wishlist").show();
-                }
+        if (values.Wishlist) {
+            $("div.menu-tray > div.menu-item.menu-wishlist.has-submenu.js-menu-wishlist").hide();
+        }
+        else {
+            $("div.menu-tray > div.menu-item.menu-wishlist.has-submenu.js-menu-wishlist").show();
+        }
+        if (values["Download Galaxy"]) {
+            $("div.menu-tray > div.menu-item.js-menu-download.menu-download:has(> a[href='/galaxy'])").hide();
+        }
+        else {
+            $("div.menu-tray > div.menu-item.js-menu-download.menu-download:has(> a[href='/galaxy'])").show();
+        }
 	}
 
-	settings.onchange('nav-hide-icons', on_update)
+	settings.onchange('nav-hide-icons', on_update);
 
 }
 function feature_hide_spoilers() {
@@ -4422,7 +4755,7 @@ function feature_navbar_theme() {
 					+"body .menu-item__count {"
 					+"	opacity: 1;"
 					+"}"
-					+"body #menuUsername[data-BE-updates]:before {"
+					+"body #BE_menuUsername[data-BE-updates]:before {"
 					+"	color: #0825ff;"
 					+"}"
 				)
@@ -4472,7 +4805,7 @@ function feature_navbar_theme() {
 					+"body .menu-item__count {"
 					+"	opacity: 1;"
 					+"}"
-					+"body #menuUsername[data-BE-updates]:before {"
+					+"body #BE_menuUsername[data-BE-updates]:before {"
 					+"	color: #1e9fd2;"
 					+"	font-size: 12px;"
 					+"	float: right;"
@@ -4534,15 +4867,36 @@ function feature_nav_about_links() {
 	}
 	function on_about_galaxy_update(value) {
 
+         galaxy_1_2.toggle(value["Download Galaxy 1.2"]);
+         galaxy_2_0.toggle(value["Download Galaxy 2.0"]);
         cloud_saves.toggle(value["Cloud saves"]);
 
-        var about_galaxy_visible = value["Cloud saves"];
+        var about_galaxy_visible = value["Download Galaxy 1.2"]
+                                || value["Download Galaxy 2.0"]
+                                || value["Cloud saves"];
+
         about_galaxy_arrow.toggle(about_galaxy_visible);
         if (about_galaxy_visible) {
             special_links_submenu_about_galaxy.   addClass("BE-special-links-submenu");
         }
         else {
             special_links_submenu_about_galaxy.removeClass("BE-special-links-submenu");
+        }
+
+	}
+	function on_about_patrons_update(value) {
+
+        patrons_hub   .toggle(value["GOG Patrons Hub"   ]);
+        patrons_amount.toggle(value["GOG Patrons Amount"]);
+
+        var about_patrons_visible = value["GOG Patrons Hub"]
+                                 || value["GOG Patrons Amount"];
+        about_patrons_arrow.toggle(about_patrons_visible);
+        if (about_patrons_visible) {
+            special_links_submenu_about_patrons.   addClass("BE-special-links-submenu");
+        }
+        else {
+            special_links_submenu_about_patrons.removeClass("BE-special-links-submenu");
         }
 
 	}
@@ -4564,6 +4918,12 @@ function feature_nav_about_links() {
 .BE-special-links-submenu > .menu-submenu-item.menu-submenu-item--hover[style] > .menu-submenu-link.BE-special-link {
     background: var(--c-background) !important;
     padding-right: 5px !important;
+}
+.BE-special-links-submenu > .menu-submenu-item.menu-submenu-item--hover[style] > .menu-submenu-link.BE-special-link.menu-link--pending-notifications {
+    padding-left: 24px;
+}
+.BE-special-links-submenu > .menu-submenu-item.menu-submenu-item--hover[style] > .menu-submenu-link.BE-special-link.menu-link--pending-notifications::before {
+    left: 8px;
 }
 .BE-special-links-submenu > .menu-submenu-item.menu-submenu-item--hover[style] > .menu-submenu-link.BE-special-link:hover {
     background: var(--c-background-secondary) !important;
@@ -4607,42 +4967,167 @@ function feature_nav_about_links() {
 
 
     // about galaxy links
-    var about_galaxy_link  = about_menu.find('a.menu-submenu-link[href*="/galaxy"]');
-    var about_galaxy_div   = about_galaxy_link.parent();
+    var about_galaxy_link  = about_menu.find('a.menu-submenu-link[href="/galaxy"]');
     var about_galaxy_arrow = $('<svg viewBox="0 0 32 32" class="menu-submenu-icon"><use xlink:href="#icon-arrow-right4"></use></svg>').hide();
     about_galaxy_link.append(about_galaxy_arrow);
-    about_galaxy_div.addClass("BE-special-link-arrow-hover");
+    galaxy.addClass("BE-special-link-arrow-hover");
     var special_links_submenu_about_galaxy = $('<div>');
-    about_galaxy_div.append(special_links_submenu_about_galaxy);
+    galaxy.append(special_links_submenu_about_galaxy);
 
+    var galaxy_1_2 = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="https://remote-config.gog.com/components/webinstaller?component_version=1.2.0" target="_blank">').text("Download Galaxy 1.2"))
+      .appendTo(special_links_submenu_about_galaxy);
+    var galaxy_2_0 = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="https://remote-config.gog.com/components/webinstaller?component_version=2.0.0" target="_blank">').text("Download Galaxy 2.0"))
+      .appendTo(special_links_submenu_about_galaxy);
     var cloud_saves = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
       .append($('<a class="menu-submenu-link BE-special-link" href="/account/cloud-saves" target="_blank">').text("Cloud saves"))
       .appendTo(special_links_submenu_about_galaxy);
 
 
-    setTimeout(settings.onchange.bind(settings, 'navbar-about-links'       , on_about_update       ), 1);
-    setTimeout(settings.onchange.bind(settings, 'navbar-about-gog-links'   , on_about_gog_update   ), 1);
-    setTimeout(settings.onchange.bind(settings, 'navbar-about-galaxy-links', on_about_galaxy_update), 1);
+    // about patrons links
+    var about_patrons_link  = about_menu.find('a.menu-submenu-link[href$="/patrons"]');
+    var about_patrons_arrow = $('<svg viewBox="0 0 32 32" class="menu-submenu-icon"><use xlink:href="#icon-arrow-right4"></use></svg>').hide();
+    about_patrons_link.append(about_patrons_arrow);
+    patrons.addClass("BE-special-link-arrow-hover");
+    var special_links_submenu_about_patrons = $('<div>');
+    patrons.append(special_links_submenu_about_patrons);
+
+    var patrons_hub = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/gog-patrons-hub" target="_blank">').text("GOG Patrons Hub"))
+      .appendTo(special_links_submenu_about_patrons);
+    var patrons_amount = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/en/productcard/patronage/users?limit=1&nextToken=999999" target="_blank">').text("GOG Patrons Amount"))
+      .appendTo(special_links_submenu_about_patrons);
+
+
+    setTimeout(settings.onchange.bind(settings, 'navbar-about-links'        , on_about_update        ), 1);
+    setTimeout(settings.onchange.bind(settings, 'navbar-about-gog-links'    , on_about_gog_update    ), 1);
+    setTimeout(settings.onchange.bind(settings, 'navbar-about-galaxy-links' , on_about_galaxy_update ), 1);
+    setTimeout(settings.onchange.bind(settings, 'navbar-about-patrons-links', on_about_patrons_update), 1);
 }
 function feature_nav_community_links() {
 
 	function on_update(value) {
 
-		facebook.toggle(value["Facebook"])
-		twitch.toggle(value["Twitch"])
-		twitter.toggle(value["Twitter"])
+		gog_forums_general.toggle(value["General discussion forum"]);
+		gog_forums_replies.toggle(value["Forum replies"]);
+		gog_patrons_hub   .toggle(value["GOG Patrons Hub"]);
 
-		separator.toggle(value["Facebook"] || value["Twitter"] || value["Twitch"])
+		facebook.toggle(value["Facebook"]);
+		  twitch.toggle(value["Twitch"  ]);
+		 twitter.toggle(value["Twitter" ]);
+
+		separator.toggle(value["Facebook"]
+                      || value["Twitter" ]
+                      || value["Twitch"  ]);
 		
 	}
+	function on_community_forums_update(value) {
 
-	var community_menu = $('.js-menu-community')
-	var facebook = community_menu.find('a.menu-submenu-link[href="https://www.facebook.com/gogcom"]').parent()
-	var twitter = community_menu.find('a.menu-submenu-link[href="https://twitter.com/GOGcom"]').parent()
-	var twitch = community_menu.find('a.menu-submenu-link[href="https://www.twitch.tv/gogcom"]').parent()
-	var separator = facebook.prev('.menu-submenu-separator')
+		community_forums_general     .toggle(value["General discussion forum"]);
+		community_forums_galaxy      .toggle(value["GOG GALAXY forum"]);
+		community_forums_replies     .toggle(value["Forum replies/My posts"]);
+		community_forums_my_questions.toggle(value["My questions"]);
+		community_forums_my_settings .toggle(value["My forum settings"]);
 
-	setTimeout(settings.onchange.bind(settings, 'navbar-community-links', on_update), 1)
+        var community_forums_visible = value["General discussion forum"]
+                                    || value["GOG GALAXY forum"]
+                                    || value["Forum replies/My posts"]
+                                    || value["My questions"]
+                                    || value["My forum settings"];
+        separator_forums_my_stuff.toggle((value["General discussion forum"]
+                                      ||  value["GOG GALAXY forum"])
+                                      && (value["Forum replies/My posts"]
+                                      ||  value["My questions"]
+                                      ||  value["My forum settings"]));
+
+        community_forums_arrow.toggle(community_forums_visible);
+        if (community_forums_visible) {
+            special_links_submenu_community_forums.   addClass("BE-special-links-submenu");
+        }
+        else {
+            special_links_submenu_community_forums.removeClass("BE-special-links-submenu");
+        }
+
+        if (value["Forum replies"]) {
+            if ($(community_forums_replies_selectorCommunityHeaderLink).hasClass(community_forums_replies_classPendingNotifs)) {
+                $('> a', community_forums_replies).addClass(community_forums_replies_classPendingNotifs);
+            }
+
+            community_forums_replies_activeObserver = get_active_mutation_observer(community_forums_replies_targetNode, community_forums_replies_config, community_forums_replies_callback);
+        }
+        else {
+            if (community_forums_replies_activeObserver) {
+                community_forums_replies_activeObserver.disconnect();
+                community_forums_replies_activeObserver = undefined;
+            }
+        }
+
+	}
+
+	var community_menu = $('.js-menu-community');
+
+    // gog community links
+    var gog_forums_general = community_menu.find('a.menu-submenu-link[href="/forum/general"]'      ).parent();
+    var gog_forums_replies = community_menu.find('a.menu-submenu-link[href="/forum/myrecentposts"]').parent();
+    var gog_patrons_hub    = community_menu.find('a.menu-submenu-link[href$="/gog-patrons-hub"]'   ).parent();
+
+	var facebook = community_menu.find('a.menu-submenu-link[href="https://www.facebook.com/gogcom"]').parent();
+	var twitter  = community_menu.find('a.menu-submenu-link[href="https://twitter.com/GOGcom"]'     ).parent();
+	var twitch   = community_menu.find('a.menu-submenu-link[href="https://www.twitch.tv/gogcom"]'   ).parent();
+	var separator = facebook.prev('.menu-submenu-separator');
+
+    // community forums links
+    var community_forums_link  = community_menu.find('a.menu-submenu-link[href="/forum"]');
+    var community_forums_div   = community_forums_link.parent();
+    var community_forums_arrow = $('<svg viewBox="0 0 32 32" class="menu-submenu-icon"><use xlink:href="#icon-arrow-right4"></use></svg>').hide();
+    community_forums_link.append(community_forums_arrow);
+    community_forums_div.addClass("BE-special-link-arrow-hover");
+    var special_links_submenu_community_forums = $('<div>');
+    community_forums_div.append(special_links_submenu_community_forums);
+
+    var community_forums_general      = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/forum/general" target="_blank">').text("General discussion forum"))
+      .appendTo(special_links_submenu_community_forums);
+    var community_forums_galaxy       = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/forum/general_beta_gog_galaxy_2.0" target="_blank">').text("GOG GALAXY forum"))
+      .appendTo(special_links_submenu_community_forums);
+    var community_forums_replies      = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/forum/myrecentposts" target="_blank">').text("Forum replies/My posts"))
+      .appendTo(special_links_submenu_community_forums);
+    var community_forums_my_questions = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/forum/myquestions" target="_blank">').text("My questions"))
+      .appendTo(special_links_submenu_community_forums);
+    var community_forums_my_settings  = $('<div class="menu-submenu-item menu-submenu-item--hover">').hide()
+      .append($('<a class="menu-submenu-link BE-special-link" href="/forum/mysettings" target="_blank">').text("My forum settings"))
+      .appendTo(special_links_submenu_community_forums);
+	var separator_forums_my_stuff = $('<div class="menu-submenu-separator">').insertBefore(community_forums_replies);
+
+	var community_forums_replies_activeObserver = undefined;
+    const community_forums_replies_selectorCommunityHeaderLink = 'body div.menu-item.has-submenu.js-menu-community > a[hook-test="menuCommunityButton"]';
+    const community_forums_replies_classPendingNotifs = "menu-link--pending-notifications";
+    const community_forums_replies_targetNode = $(community_forums_replies_selectorCommunityHeaderLink).get(0);
+    const community_forums_replies_config = { attributes: true, attributeOldValue: true, childList: false, subtree: false };
+    const community_forums_replies_callback = (mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.type === "attributes") {
+                const oldValueContainsNotifDot = mutation.oldValue        .includes(community_forums_replies_classPendingNotifs);
+                const newValueContainsNotifDot = mutation.target.classList.contains(community_forums_replies_classPendingNotifs);
+
+                if      (!oldValueContainsNotifDot &&  newValueContainsNotifDot) {
+                    $('> a', community_forums_replies).   addClass(community_forums_replies_classPendingNotifs);
+                }
+                else if ( oldValueContainsNotifDot && !newValueContainsNotifDot) {
+                    $('> a', community_forums_replies).removeClass(community_forums_replies_classPendingNotifs);
+                }
+            }
+        }
+    };
+
+
+    setTimeout(settings.onchange.bind(settings, 'navbar-community-links'       , on_update                 ), 1);
+	setTimeout(settings.onchange.bind(settings, 'navbar-community-forums-links', on_community_forums_update), 1);
 
 }
 function feature_nav_support_links() {
@@ -4689,7 +5174,8 @@ function feature_nav_account_links() {
 
 	function on_account_update(value) {
 
-        your_year_gog.toggle(value["Your year with GOG"]);
+        your_year_gog  .toggle(value["Your year with GOG"]);
+        gog_patrons_hub.toggle(value["GOG Patrons Hub"   ]);
 
 	}
 	function on_account_profile_update(value) {
@@ -4712,7 +5198,8 @@ function feature_nav_account_links() {
     // account links
 	var account_menu = $('.js-menu-account');
 
-    var your_year_gog = account_menu.find('a.menu-submenu-link[href="/year"]').parent();
+    var your_year_gog   = account_menu.find('a.menu-submenu-link[href="/year"]'            ).parent();
+    var gog_patrons_hub = account_menu.find('a.menu-submenu-link[href$="/gog-patrons-hub"]').parent();
 
     // account profile links
     var account_profile_link  = account_menu.find('a.menu-submenu-link[hook-test="menuAccountProfile"]');
@@ -4731,8 +5218,26 @@ function feature_nav_account_links() {
       .appendTo(special_links_submenu_account_profile);
 
 
-    setTimeout(settings.onchange.bind(settings, 'navbar-account-gog-links'    , on_account_update        ), 1);
+    setTimeout(settings.onchange.bind(settings, 'navbar-account-links'        , on_account_update        ), 1);
     setTimeout(settings.onchange.bind(settings, 'navbar-account-profile-links', on_account_profile_update), 1);
+}
+function feature_nav_account_header_add_username_back() {
+
+	function on_update(value) {
+		if (value) {
+            const username = $('div.menu-item.menu-account.has-submenu > div.menu-account__submenu > div.menu-header.menu-account__user > div.menu-account__user-in > span.menu-account__user-name').text();
+            username_container.text(get_user_info?.username ?? username);
+        }
+		else
+            username_container.text("");
+	}
+
+    const account_header_user_pic = $('div.menu-item.menu-account.has-submenu > a[hook-test="menuAccountButton"] > img.menu-link__image');
+	const username_container = $('<span id="BE_menuUsername">')
+      .insertAfter(account_header_user_pic);
+
+	settings.onchange('navbar-account-header-add-username-back', on_update)
+
 }
 function feature_nav_display_notifications() {
 
@@ -4744,17 +5249,17 @@ function feature_nav_display_notifications() {
 
 			var total_alerts_menuUsername = (user_info.updates.unreadChatMessages || 0) + (user_info.updates.pendingFriendRequests || 0)
 			if (value && total_alerts_menuUsername > 0) {
-				$('#menuUsername').attr('data-BE-alerts', total_alerts_menuUsername)
+				$('#BE_menuUsername').attr('data-BE-alerts', total_alerts_menuUsername)
 			} else {
-				$('#menuUsername').removeAttr('data-BE-alerts')
+				$('#BE_menuUsername').removeAttr('data-BE-alerts')
 			}
-			
-                	var total_alerts_menuCommunity = (user_info.updates.messages || 0)
-                	if (value && total_alerts_menuCommunity > 0) {
+
+			var total_alerts_menuCommunity = (user_info.updates.messages || 0)
+			if (value && total_alerts_menuCommunity > 0) {
 				$('.menu-item.js-menu-community > .menu-link.menu-uppercase').attr('data-BE-alerts', total_alerts_menuCommunity)
-                	} else {
-                		$('.menu-item.js-menu-community > .menu-link.menu-uppercase').removeAttr('data-BE-alerts')
-			}
+			} else {
+                $('.menu-item.js-menu-community > .menu-link.menu-uppercase').removeAttr('data-BE-alerts')
+            }
 		}
 
 		function scrape_forum_replies() {
@@ -4821,9 +5326,8 @@ function feature_nav_display_notifications() {
 		var friend = $('<span class="menu-submenu-item__label">').text(user_info.updates.pendingFriendRequests)
 		if (user_info.updates.pendingFriendRequests) friend.appendTo($('.js-menu-account .menu-submenu-item a[href$="/account/friends"]'))
 
-		$('<style>')
-		.text(
-			"#menuUsername[data-BE-alerts]:after {"
+		$('<style>').text(
+			"#BE_menuUsername[data-BE-alerts]:after {"
 			+"	content: attr(data-BE-alerts);"
 			+"	display: inline-block;"
 			+"	color: #ddd;"
@@ -4838,9 +5342,8 @@ function feature_nav_display_notifications() {
 			+"}"
 		)
 		.appendTo(document.head)
-		
-                $('<style>')
-                .text(
+
+		$('<style>').text(
 			".menu-item.js-menu-community > .menu-link.menu-uppercase[data-BE-alerts]:after {"
 			+"	content: attr(data-BE-alerts);"
 			+"	display: inline-block;"
@@ -4867,14 +5370,15 @@ function feature_nav_display_updates() {
 	get_user_info.then((user_info) => {
 		function on_update(value) {
 			if (value && user_info.updates.products > 0) {
-				$('#menuUsername').attr('data-BE-updates', user_info.updates.products);
+				$('#BE_menuUsername').attr('data-BE-updates', user_info.updates.products);
 				$('.menu-item.menu-account > a.menu-link').attr("style", 'overflow:visible;');
-			} else $('#menuUsername').removeAttr('data-BE-updates')
+			}
+            else
+                $('#BE_menuUsername').removeAttr('data-BE-updates')
 		}
 
-		$('<style>')
-		.text(
-			"#menuUsername[data-BE-updates]:before {"
+		$('<style>').text(
+			"#BE_menuUsername[data-BE-updates]:before {"
 			+"	content: '\u2191' attr(data-BE-updates);"
 			+"	color: #F4D514;"
 			+"	position: absolute;"
@@ -4882,9 +5386,9 @@ function feature_nav_display_updates() {
 			+"	white-space: nowrap;"
 			+"	font-size: 14px;"
 			+"	padding: 0;"
-			+"	margin-left: 25px;"
+			+"	margin-left: 15px;"
 			+"}"
-			+"#menuUsername {"
+			+"#BE_menuUsername {"
 			+"	position: relative;"
 			+"	display: inline-block;"
 			+"}"
@@ -5123,10 +5627,12 @@ function feature_forum_add_open_new_group_topics_links(location) {
         case "forum-selected":
             add_link_forum_selected('.favourite_h.BE-delisting-topics', false);
             add_link_forum_selected('#t_fav', false);
+            add_link_forum_selected('.favourite_h.BE-sticky-topics', false);
             add_link_forum_selected('.favourite_h.BE-news-topics', false);
             add_link_forum_selected('.favourite_h.BE-giveaway-topics', false);
             add_link_forum_selected('.favourite_h.BE-forumgame-topics', false);
             add_link_forum_selected('.favourite_h.BE-spam-topics', false);
+            add_link_forum_selected('.favourite_h.BE-heavily-discussed-topics', false);
             add_link_forum_selected('#t_norm', true);
             break;
     }
@@ -5239,6 +5745,7 @@ if (location.hostname == 'www.gog.com') {
 		feature_nav_community_links();
         feature_nav_support_links();
         feature_nav_account_links();
+        feature_nav_account_header_add_username_back();
 		feature_nav_display_notifications();
 		feature_nav_display_updates();
 		feature_nav_menu_links();
@@ -5250,10 +5757,12 @@ if (location.hostname == 'www.gog.com') {
             feature_forum_make_show_more_buttons_get_all_topics();
 			if (/^\/forum\/[^/]*(?:\/(?:page[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
 				feature_forum_group_delistings();
+                feature_forum_group_stickies();
 				feature_forum_group_news();
 				feature_forum_group_giveaways();
 				feature_forum_group_forumgames();
                 feature_forum_group_spams();
+                feature_forum_group_heavily_discussed();
 				feature_forum_old_gog_avatar();
 				feature_forum_remove_fragment();
 				feature_forum_theme();
