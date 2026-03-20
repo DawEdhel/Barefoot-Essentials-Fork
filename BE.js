@@ -6,7 +6,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2p
+// @version        3.0.2pa
 // @updateURL      https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @downloadURL    https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @supportURL     https://github.com/DawEdhel/Barefoot-Essentials-Fork/issues
@@ -21,7 +21,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2p'
+var version = '3.0.2pa'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -818,7 +818,7 @@ config = {
         {"type": "bool", "def": false, "key": "nav-display-notifications", "label": "Display BE notification for forum replies and chat"},
         {"type": "bool", "def": false, "key": "nav-display-updates", "label": "Display BE notification for new game updates"},
         {"type": "multibool", "options": {"Activity feed": false, "Forum replies": false}, "key": "nav-hide-notification-dot", "label": "Hide GOG notification dot for"},
-		{"type": "multibool", "options": {"Alerts": false, "Friends": false, "Wishlist": false, "Download Galaxy": false}, "key": "nav-hide-icons", "label": "Hide notification icons"},
+		{"type": "multibool", "options": {"Alerts": false, "Friends": false, "Wishlist": false, "Download Galaxy": true}, "key": "nav-hide-icons", "label": "Hide notification icons"},
         {"type": "choice", "options": ["GOG.com", "GOG Galaxy", "GOG Connect", "GOG Downloader"], "def": "GOG.com", "key": "navbar-about-menu-link", "label": "Clicking on \"About\" takes you to a page about"},
         {"type": "multibool", "options": {"GOG Galaxy": true, "GOG Downloader": false, "GOG Connect": false, "GOG Preservation Program": true, "GOG Patrons": true, "GOG One-click Mods": true}, "key": "navbar-about-links", "label": "About menu links"},
         {"type": "multibool", "options": {"Blast from the Past": true, "Claim current giveaway": true, "Konami easter-egg": true}, "key": "navbar-about-gog-links", "label": "About menu GOG links"},
@@ -838,6 +838,14 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2pa",
+		"date": "2026-03-20",
+        "changes": [
+			"Set hide galaxy navbar icon to be on by default (for new users).",
+			"Made the script to be executed at later stage for better compatibility with slower browsers.",
+        ]
+	},
 	{
 		"version": "3.0.2p",
 		"date": "2026-03-19",
@@ -5645,9 +5653,7 @@ function feature_forum_make_show_more_buttons_get_all_topics() {
 function feature_forum_expand_popups_to_fit_content() {
     if (settings.get('forum_expand_popups_to_fit_content')) {
         if (navigator.userAgent.indexOf("Chrome/") != -1) {
-            $(document).ready(function() {
-                window.resizeTo(1052, 820);
-            });
+            window.resizeTo(1052, 820);
         }
     }
 }
@@ -5717,103 +5723,101 @@ news-section > slider-navigation > div.swiper-container {
     padding-top: 0px !important;
 }`);
 
-        $(window).on('load', function() {
-            setTimeout(settings.onchange.bind(settings, 'main-page-move-compacted-news-section-to-the-top', on_update), 1);
-        })
+        setTimeout(settings.onchange.bind(settings, 'main-page-move-compacted-news-section-to-the-top', on_update), 1);
     }
 }
 
-if (location.hostname == 'www.gog.com') {
-	settings.initialise(config, function() {
-		get_user_info = fetch_user_info()
-		if (/^\/forum/.test(window.location.pathname)) {
-			detect_forum_skin()
-			add_preview_styles()
-		} else if (/^(?:\/[^/]*)?\/(?:game|movie)\/[^/]*$/.test(window.location.pathname)) {
-			compat_get_gogData()
-		}
-		feature_BE_styles();
-        feature_main_page_move_compacted_news_section_to_the_top()
-		feature_connect_autocheck();
-		feature_essentials_link();
-		feature_favicon();
-		feature_hide_menu_icons();
-		feature_navbar_hide_overlay();
-		feature_navbar_position();
-		feature_navbar_theme();
-		feature_nav_about_links();
-		feature_nav_community_links();
-        feature_nav_support_links();
-        feature_nav_account_links();
-        feature_nav_account_header_add_username_back();
-		feature_nav_display_notifications();
-		feature_nav_display_updates();
-		feature_nav_menu_links();
-		feature_nav_notification_dot();
-		feature_paging_shortcut_keys();
-		if (/^\/forum/.test(window.location.pathname)) {
-			feature_forum_old_gog_avatar();
-            feature_forum_add_open_new_group_topics_links("forum-main-page");
-            feature_forum_make_show_more_buttons_get_all_topics();
-			if (/^\/forum\/[^/]*(?:\/(?:page[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
-				feature_forum_group_delistings();
-                feature_forum_group_stickies();
-				feature_forum_group_news();
-				feature_forum_group_giveaways();
-				feature_forum_group_forumgames();
-                feature_forum_group_spams();
-                feature_forum_group_heavily_discussed();
-				feature_forum_old_gog_avatar();
-				feature_forum_remove_fragment();
-				feature_forum_theme();
-                feature_forum_add_open_new_group_topics_links("forum-selected");
-			}
-			if (/^\/forum\/[^/]*\/[^/]*(?:\/(?:page[0-9]+|post[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
-				feature_avatar_zoom();
-				feature_click_own_title();
-				feature_embed_youtube();
-				feature_enhance_bold_text();
-				feature_forum_avatar_style();
-				feature_forum_detect_necro();
-				feature_forum_move_edit_note();
-				feature_forum_move_online_offline_status();
-				feature_forum_quick_post();
-				feature_forum_quotation_style();
-				feature_forum_show_hover_elements();
-				feature_forum_theme();
-				feature_hide_spoilers();
-                feature_forum_mark_new_users_posts();
-			}
-			if (location.pathname == '/forum/ajax/popUp') {
-				feature_post_preview();
-                feature_forum_expand_popups_to_fit_content();
-			}
-		}
-		if (/^(?:\/[^/]*)?\/movie\/[^/]*$/.test(window.location.pathname)) {
-			feature_gamecard_additional_information_links();
-			feature_gamecard_show_descriptions();
-            feature_gamecard_compact_hltb_section();
-            feature_gamecard_autocancel_new_review_form();
-		}
-		if (/^(?:\/[^/]*)?\/game\/[^/]*$/.test(window.location.pathname)) {
-			feature_gamecard_additional_information_links();
-			feature_gamecard_show_descriptions();
-            feature_gamecard_compact_hltb_section();
-            feature_gamecard_autocancel_new_review_form();
-		}
-		if (/^(?:\/[^/]*)?\/promo\/[^/]*$/.test(window.location.pathname)) {
-			feature_promo_show_discount();
-		}
+$(window).on('load', function() {
+    if (location.hostname == 'www.gog.com') {
+        settings.initialise(config, function() {
+            get_user_info = fetch_user_info()
+            if (/^\/forum/.test(window.location.pathname)) {
+                detect_forum_skin()
+                add_preview_styles()
+            } else if (/^(?:\/[^/]*)?\/(?:game|movie)\/[^/]*$/.test(window.location.pathname)) {
+                compat_get_gogData()
+            }
+            feature_BE_styles();
+            feature_main_page_move_compacted_news_section_to_the_top()
+            feature_connect_autocheck();
+            feature_essentials_link();
+            feature_favicon();
+            feature_hide_menu_icons();
+            feature_navbar_hide_overlay();
+            feature_navbar_position();
+            feature_navbar_theme();
+            feature_nav_about_links();
+            feature_nav_community_links();
+            feature_nav_support_links();
+            feature_nav_account_links();
+            feature_nav_account_header_add_username_back();
+            feature_nav_display_notifications();
+            feature_nav_display_updates();
+            feature_nav_menu_links();
+            feature_nav_notification_dot();
+            feature_paging_shortcut_keys();
+            if (/^\/forum/.test(window.location.pathname)) {
+                feature_forum_old_gog_avatar();
+                feature_forum_add_open_new_group_topics_links("forum-main-page");
+                feature_forum_make_show_more_buttons_get_all_topics();
+                if (/^\/forum\/[^/]*(?:\/(?:page[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
+                    feature_forum_group_delistings();
+                    feature_forum_group_stickies();
+                    feature_forum_group_news();
+                    feature_forum_group_giveaways();
+                    feature_forum_group_forumgames();
+                    feature_forum_group_spams();
+                    feature_forum_group_heavily_discussed();
+                    feature_forum_old_gog_avatar();
+                    feature_forum_remove_fragment();
+                    feature_forum_theme();
+                    feature_forum_add_open_new_group_topics_links("forum-selected");
+                }
+                if (/^\/forum\/[^/]*\/[^/]*(?:\/(?:page[0-9]+|post[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
+                    feature_avatar_zoom();
+                    feature_click_own_title();
+                    feature_embed_youtube();
+                    feature_enhance_bold_text();
+                    feature_forum_avatar_style();
+                    feature_forum_detect_necro();
+                    feature_forum_move_edit_note();
+                    feature_forum_move_online_offline_status();
+                    feature_forum_quick_post();
+                    feature_forum_quotation_style();
+                    feature_forum_show_hover_elements();
+                    feature_forum_theme();
+                    feature_hide_spoilers();
+                    feature_forum_mark_new_users_posts();
+                }
+                if (location.pathname == '/forum/ajax/popUp') {
+                    feature_post_preview();
+                    feature_forum_expand_popups_to_fit_content();
+                }
+            }
+            if (/^(?:\/[^/]*)?\/movie\/[^/]*$/.test(window.location.pathname)) {
+                feature_gamecard_additional_information_links();
+                feature_gamecard_show_descriptions();
+                feature_gamecard_compact_hltb_section();
+                feature_gamecard_autocancel_new_review_form();
+            }
+            if (/^(?:\/[^/]*)?\/game\/[^/]*$/ .test(window.location.pathname)) {
+                feature_gamecard_additional_information_links();
+                feature_gamecard_show_descriptions();
+                feature_gamecard_compact_hltb_section();
+                feature_gamecard_autocancel_new_review_form();
+            }
+            if (/^(?:\/[^/]*)?\/promo\/[^/]*$/.test(window.location.pathname)) {
+                feature_promo_show_discount();
+            }
 
-		// check version, and show changelog if new
-		storage.get('last_BE_version', function(last_BE_version) {
-			if (last_BE_version === undefined) last_BE_version = default_prev_version
-			else if (settings.get('BE-show-changelog') !== false && cmpVersion(last_BE_version, version) < 0) {
-				popup.show('Changelog')
-			}
-			storage.set('last_BE_version', version)
-		})
-	})
-}
-
-
+            // check version, and show changelog if new
+            storage.get('last_BE_version', function(last_BE_version) {
+                if (last_BE_version === undefined) last_BE_version = default_prev_version
+                else if (settings.get('BE-show-changelog') !== false && cmpVersion(last_BE_version, version) < 0) {
+                    popup.show('Changelog')
+                }
+                storage.set('last_BE_version', version)
+            })
+        })
+    }
+});
