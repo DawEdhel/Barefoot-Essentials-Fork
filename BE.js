@@ -6,7 +6,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2pa
+// @version        3.0.2pb
 // @updateURL      https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @downloadURL    https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @supportURL     https://github.com/DawEdhel/Barefoot-Essentials-Fork/issues
@@ -21,7 +21,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2pa'
+var version = '3.0.2pb'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -812,8 +812,8 @@ config = {
 	],
 	"Navigation bar": [
         {"type": "choice", "options": ["fixed (normal)", "absolute"], "def": "fixed (normal)", "key": "navbar-position", "label": "Navigation bar position"},
-        {"type": "choice", "options": ["Default theme", "Default without the stripe", "GOG Classic 2012", "GOG Classic 2014", "Bright black"], "def": "Bright black", "key": "navbar-logo", "label": "Navigation bar logo"},
-        {"type": "choice", "options": ["Default theme", "Default without the stripe", "GOG Classic 2012", "GOG Classic 2014", "Bright black"], "def": "Bright black", "key": "navbar-theme", "label": "Navigation bar theme"},
+        {"type": "choice", "options": ["Default theme", "Default without the stripe", "GOG Classic 2012", "GOG Classic 2014", "Bright black", "Galaxy"], "def": "Bright black", "key": "navbar-logo" , "label": "Navigation bar logo"},
+        {"type": "choice", "options": ["Default theme", "Default without the stripe", "GOG Classic 2012", "GOG Classic 2014", "Bright black", "Galaxy"], "def": "Bright black", "key": "navbar-theme", "label": "Navigation bar theme"},
         {"type": "bool", "def": true, "key": "nav-hide-overlay", "label": "Remove the dark menu overlay"},
         {"type": "bool", "def": false, "key": "nav-display-notifications", "label": "Display BE notification for forum replies and chat"},
         {"type": "bool", "def": false, "key": "nav-display-updates", "label": "Display BE notification for new game updates"},
@@ -838,6 +838,13 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2pb",
+		"date": "2026-04-01",
+        "changes": [
+			"Added new navbar logo/theme.",
+        ]
+	},
 	{
 		"version": "3.0.2pa",
 		"date": "2026-03-20",
@@ -4635,7 +4642,7 @@ function feature_navbar_theme() {
 	function on_update_logo (value) {
 		switch (value) {
 			case 'Default without the stripe':
-				style_logo.text('')
+				style_logo.text('');
 				break
 			case 'Bright black':
 				style_logo.text(
@@ -4657,7 +4664,7 @@ function feature_navbar_theme() {
 					+"	padding-top: 23px;"
 					+"	margin-top: 17px;"
 					+"}"
-				)
+				);
 				break
 			case 'GOG Classic 2012':
 				style_logo.text(
@@ -4673,7 +4680,7 @@ function feature_navbar_theme() {
 					+"	padding-top: 23px;"
 					+"	margin-top: 17px;"
 					+"}"
-				)
+				);
 				break
 			case 'GOG Classic 2014':
 				style_logo.text(
@@ -4698,10 +4705,40 @@ function feature_navbar_theme() {
 					+"	height: 42px;"
 					+"	width: 42px;"
 					+"}"
-				)
+				);
+				break
+			case 'Galaxy':
+				style_logo.text(
+					"body .menu__logo {"
+                    // navbar galaxy button
+					+"	display: block;"
+					+"	position: static;"
+					+"	overflow: hidden;"
+					+"	background: url('https://menu-static.gog-statics.com/assets/img/galaxy_button_bg.jpg');"
+					+"	background-position: 0 -54px;"
+					+"	height: 0;"
+					+"	width: 98px;"
+					+"	min-width: 98px;"
+					+"	padding-top: 28px;"
+					+"	margin-top: 12px;"
+                    +"  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.73), inset 0 0 3px 1px #a268bd;"
+                    +"  border-radius: 8px;"
+					+"}"
+                    +"body .menu__logo:before {"
+                    +"  position: absolute;"
+                    +"  top: 24px;"
+                    +"  left: -22px;"
+                    +"  padding: 0 10px 0 30px;"
+
+                    +"  content: 'GALAXY.COM';"
+                    +"  color: #fff;"
+                    +"  font-size: 13px;"
+                    +"  line-height: 15px;"
+                    +"}"
+				);
 				break
 			default:
-				style_logo.text('')
+				style_logo.text('');
 		}
 	}
 	function on_update_theme(value) {
@@ -4711,14 +4748,14 @@ function feature_navbar_theme() {
 					"body .menu {"
 					+"	top: -4px;"
 					+"}"
-				)
+				);
 				break
 			case 'Bright black':
 				style_theme.text(
 					"body .menu {"
 					+"	top: -4px;"
 					+"}"
-				)
+				);
 				break
 			case 'GOG Classic 2012':
 				style_theme.text(
@@ -4766,7 +4803,7 @@ function feature_navbar_theme() {
 					+"body #BE_menuUsername[data-BE-updates]:before {"
 					+"	color: #0825ff;"
 					+"}"
-				)
+				);
 				break
 			case 'GOG Classic 2014':
 				style_theme.text(
@@ -4820,10 +4857,178 @@ function feature_navbar_theme() {
 					+"	margin-left: 0.5em;"
 					+"	position: static;"
 					+"}"
-				)
+				);
+				break
+			case 'Galaxy':
+				style_theme.text(
+					"body .menu {"
+					+"	top: -4px;"
+					+"}"
+                    +"@keyframes slide {"
+                    +"  0% {"
+                    +"    background-position : 0px 0px"
+                    +"  }"
+                    +"  100% {"
+                    +"    background-position : 0px -2048px"
+                    +"  }"
+                    +"}"
+                    +"body nav > div.menu-background {"
+                    // dedicated galaxy page background
+                    +"  background: url('https://gogalaxy.gog-statics.com/build/images/bg-bottom-1440-b5f75dac.jpg') repeat-y;"
+                    +"  animation: slide 60s linear infinite;"
+                    +"}"
+                    +"body nav > div.menu__container {"
+					+"	width: auto;"
+					+"	max-width: stretch;"
+					+"	margin: 0px 1%;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item.js-menu-store > a.menu-link:before {"
+                    +"  position: absolute;"
+					+"	background: url('https://menu-static.gog-statics.com/assets/img/galaxy_button_bg.jpg');"
+					+"	background-position: 0 -54px;"
+					+"	width: 60px;"
+					+"	min-width: 60px;"
+					+"	height: 40px;"
+                    +"  top: -5px;"
+                    +"  left: 2px;"
+                    +"  padding: 0 10px 0 5px;"
+					+"	margin-top: 12px;"
+                    +"  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.73), inset 0 0 3px 1px #a268bd;"
+                    +"  border-radius: 8px;"
+
+                    +"  content: 'GALAXY STORE';"
+                    +"  color: #fff;"
+                    +"  font-size: 13px;"
+                    +"  line-height: 16px;"
+                    +"  white-space: normal;"
+                    +"  align-content: center;"
+                    +"  text-align: center;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item.js-menu-about > a.menu-link:before {"
+                    +"  position: absolute;"
+					+"	background: url('https://menu-static.gog-statics.com/assets/img/galaxy_button_bg.jpg');"
+					+"	background-position: 0 -54px;"
+					+"	width: 64px;"
+					+"	min-width: 64px;"
+					+"	height: 40px;"
+                    +"  top: -5px;"
+                    +"  left: 2px;"
+                    +"  padding: 0 10px 0 5px;"
+					+"	margin-top: 12px;"
+                    +"  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.73), inset 0 0 3px 1px #a268bd;"
+                    +"  border-radius: 8px;"
+
+                    +"  content: 'ABOUT GALAXY';"
+                    +"  color: #fff;"
+                    +"  font-size: 13px;"
+                    +"  line-height: 16px;"
+                    +"  white-space: normal;"
+                    +"  align-content: center;"
+                    +"  text-align: center;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item.js-menu-community > a.menu-link:before {"
+                    +"  position: absolute;"
+					+"	background: url('https://menu-static.gog-statics.com/assets/img/galaxy_button_bg.jpg');"
+					+"	background-position: 0 -54px;"
+					+"	width: 106px;"
+					+"	min-width: 106px;"
+					+"	height: 40px;"
+                    +"  top: -5px;"
+                    +"  left: 2px;"
+                    +"  padding: 0 10px 0 5px;"
+					+"	margin-top: 12px;"
+                    +"  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.73), inset 0 0 3px 1px #a268bd;"
+                    +"  border-radius: 8px;"
+
+                    +"  content: 'GALAXY COMMUNITY';"
+                    +"  color: #fff;"
+                    +"  font-size: 13px;"
+                    +"  line-height: 16px;"
+                    +"  white-space: normal;"
+                    +"  align-content: center;"
+                    +"  text-align: center;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item.js-menu-support > a.menu-link:before {"
+                    +"  position: absolute;"
+					+"	background: url('https://menu-static.gog-statics.com/assets/img/galaxy_button_bg.jpg');"
+					+"	background-position: 0 -54px;"
+					+"	width: 80px;"
+					+"	min-width: 80px;"
+					+"	height: 40px;"
+                    +"  top: -5px;"
+                    +"  left: 2px;"
+                    +"  padding: 0 10px 0 5px;"
+					+"	margin-top: 12px;"
+                    +"  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.73), inset 0 0 3px 1px #a268bd;"
+                    +"  border-radius: 8px;"
+
+                    +"  content: 'SUPPORT GALAXY';"
+                    +"  color: #fff;"
+                    +"  font-size: 13px;"
+                    +"  line-height: 16px;"
+                    +"  white-space: normal;"
+                    +"  align-content: center;"
+                    +"  text-align: center;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item.js-menu-account > a.menu-link {"
+                    +"  overflow: visible;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item.js-menu-account > a.menu-link > img.menu-link__image {"
+                    +"  display: none;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item.js-menu-account > a.menu-link:before {"
+                    +"  display: inline-block;"
+                    +"  position: relative;"
+                    +"  width: 25px;"
+					+"	min-width: 25px;"
+                    +"  height: 20px;"
+                    +"  top: 5px;"
+                    // dedicated galaxy page icon
+                    +"  background-image: url('https://gogalaxy.gog-statics.com/build/images/galaxy-logo-fa7b4b2d.png');"
+                    +"  background-size: contain;"
+                    +"  background-repeat: no-repeat;"
+                    +"  content: '';"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item.js-menu-account > a.menu-link > span#BE_menuUsername {"
+                    +"  color: #d54dff;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item.js-menu-account > a.menu-link > span#BE_menuUsername:after {"
+                    +"  position: absolute;"
+					+"	background: url('https://menu-static.gog-statics.com/assets/img/galaxy_button_bg.jpg');"
+					+"	background-position: 0 -54px;"
+					+"	width: 78px;"
+					+"	min-width: 78px;"
+					+"	height: 16px;"
+                    +"  top: 33px;"
+                    +"  left: 38px;"
+                    +"  padding: 0 10px 0 5px;"
+                    +"  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.73), inset 0 0 3px 1px #a268bd;"
+                    +"  border-radius: 8px;"
+
+                    +"  content: 'USING GALAXY';"
+                    +"  color: #fff;"
+                    +"  font-size: 11px;"
+                    +"  align-content: center;"
+                    +"  text-align: center;"
+                    +"  line-height: 0px;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-tray > div.menu-item               > a.menu-link > svg.menu-icon-svg,"
+					+"body nav > div.menu__container > div.menu-tray > div.menu-item.js-menu-search > div.menu-submenu.menu-search > div.menu-search-toolbar > svg.menu-search-icon,"
+					+"body nav > div.menu__container > div.menu-tray > div.menu-item.js-menu-search > div.menu-submenu.menu-search > div.menu-search-toolbar > a.menu-search-toolbar__close > svg.menu-icon-svg {"
+                    +"  fill: #d54dff;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-tray > div.menu-item.menu-wishlist > a.menu-link > svg.menu-icon-svg {"
+                    +"  fill: none;"
+                    +"  stroke: #d54dff;"
+                    +"}"
+					+"body nav > div.menu__container > div.menu-tray > div.menu-item > a.menu-link > span.menu-item__count {"
+                    +"  color: #d54dff;"
+                    +"  background: transparent;"
+                    +"}"
+				);
 				break
 			default:
-				style_theme.text('')
+				style_theme.text('');
 		}
 	}
 
