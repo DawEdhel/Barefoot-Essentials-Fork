@@ -6,7 +6,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2pb
+// @version        3.0.2q
 // @updateURL      https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @downloadURL    https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @supportURL     https://github.com/DawEdhel/Barefoot-Essentials-Fork/issues
@@ -21,7 +21,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2pb'
+var version = '3.0.2q'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -481,38 +481,116 @@ function fetch_user_info() {
 function add_link_forum_main_page(custom_selector, after_selector) {
     var new_topics = $('div.module.topics div.module_in > div' + custom_selector + ' > div.item:not(.visited) a.dark_un');
     var new_topics_length = new_topics.length;
-    var new_topics_slice = new_topics.slice(Math.max(new_topics_length - open_topics_max_count, 0));
-    var new_topics_slice_length = new_topics_slice.length;
 
-    $('div.module.topics div.module_in > h2' + custom_selector + ' > ' + after_selector).first().after(
-        $('<span class="text" style="padding-left: 3px;"> | <a style="text-decoration: underline; text-underline-offset: 3px; font-size: 10px; vertical-align: middle;' + (new_topics_length === 0 ? " color: rgb(170, 170, 170);" : "") + '">Open new topics of this group (' + new_topics_slice_length + ' out of ' + new_topics_length +')</a></span>')
-        .on('click', {topics: new_topics_slice}, open_urls_in_new_tabs)
+    function is_section_already_hidden() {
+        return $('div.module.topics div.module_in > h2' + custom_selector + ' + div.category').is(":hidden");
+    }
+    function click_section_header() {
+        // doesn't get autoclosed without timer
+        setTimeout (function () {
+            return $('div.module.topics div.module_in > h2' + custom_selector + ' > span.arrow').trigger("click");
+        }, 200);
+    }
+    function open_urls_in_new_tabs_callback(event) {
+        this.style.textDecoration = 'line-through';
+        open_urls_in_new_tabs(event);
+
+        // hide section if all subgroups are crossed out
+        if (!is_section_already_hidden() && [...this.parentElement.querySelectorAll('a')].every((el) => el.style.textDecoration === "line-through")) {
+            click_section_header();
+        }
+    }
+
+    // autoclose if no unread topics
+    if (!is_section_already_hidden() && new_topics_length === 0) {
+        click_section_header();
+    }
+
+    // add amount of topics
+    $('div.module.topics div.module_in > h2' + custom_selector + ' > span.text:eq(0)').append(
+        $(`<span class="text" style="display:inline;"> (${$('div.module.topics div.module_in > h2' + custom_selector + ' + div.category > div.item').length})</span>`)
     );
+
+    // create a group link
+    const containerId = "BE_addForumLinkHere";
+    if (new_topics_length > 0) {
+        $('div.module.topics div.module_in > h2' + custom_selector + ' > ' + after_selector).first().after(
+            $('<span class="text" style="display:inline; cursor: text;"> | <span style="text-decoration: underline; text-underline-offset: 3px; font-size: 10px; vertical-align: middle;' + (new_topics_length === 0 ? " color: rgb(170, 170, 170);" : "") + '"><span>Open new topics of this group (</span><span id="' + containerId + '"></span><span>)</span></span></span>')
+        );
+
+        // set various styles to prevent collisions, if there are too many ranges
+        $('div.module.topics div.module_in > h2' + custom_selector)                    .css("height", "auto");
+        $('div.module.topics div.module_in > h2' + custom_selector + ' + div.category').css("overflow", "visible");
+    }
+
+    // create array of subgroups to be clicked on
+    const container = $(`span#${containerId}`);
+    for (let i = 0; i < new_topics_length; i += open_topics_max_count) {
+        const new_topics_slice = new_topics.slice(-i - open_topics_max_count, i === 0 ? undefined : -i); // -0 is not valid, use undefined instead;
+        const new_topics_slice_length = new_topics_slice.length;
+
+        if (i != 0) {
+            container.append(
+                $('<span>, </span>')
+            );
+        }
+        container.append(
+            $(`<a>[${i + 1}-${i + new_topics_slice_length}]</a>`)
+              .on('click', {topics: new_topics_slice}, open_urls_in_new_tabs_callback)
+        );
+    }
+    container.removeAttr('id');
 }
 function add_link_forum_selected(custom_selector, onlyVisibleTopics) {
     var new_topics = $(custom_selector + ' > .list_row_h a.topic_s_a' + (onlyVisibleTopics ? ":visible" : ""));
     var new_topics_length = new_topics.length;
-    var new_topics_slice = new_topics.slice(Math.max(new_topics_length - open_topics_max_count, 0));
-    var new_topics_slice_length = new_topics_slice.length;
 
     function is_section_already_hidden() {
-        return $(custom_selector + ' > .list_row_h').css("display") === 'none';
+        return $(custom_selector + ' > .list_row_h').is(":hidden");
+    }
+    function click_section_header() {
+        return $(custom_selector + ' > .list_bar_h').trigger("click");
+    }
+    function open_urls_in_new_tabs_callback(event) {
+        this.style.textDecoration = 'line-through';
+        open_urls_in_new_tabs(event);
+
+        // hide section if all subgroups are crossed out
+        if (!is_section_already_hidden() && [...this.parentElement.querySelectorAll('a')].every((el) => el.style.textDecoration === "line-through")) {
+            click_section_header();
+        }
     }
 
+    // autoclose if no unread topics
     if (!is_section_already_hidden() && new_topics_length === 0) {
-        $(custom_selector + ' > .list_bar_h').trigger("click");
+        click_section_header();
     }
 
-    $(custom_selector + ' > .list_bar_h > .lista_bar_text').first().after(
-        $('<div class="lista_bar_text" style="padding-left: 3px;"> | <a style="text-decoration: underline; text-underline-offset: 2px;' + (new_topics_length > 0 ? " color: rgb(236, 236, 236);" : "") + '">Open new topics of this group (' + new_topics_slice_length + ' out of ' + new_topics_length +')</a></div>')
-        .on('click', {topics: new_topics_slice}, function(event) {
-            open_urls_in_new_tabs(event);
+    // create a group link
+    const containerId = "BE_addForumLinkHere";
+    if (new_topics_length > 0) {
+        $(custom_selector + ' > .list_bar_h > .lista_bar_text').first().after(
+            $('<div class="lista_bar_text" style="padding-left: 3px;"> | <span style="text-decoration: underline; text-underline-offset: 2px;' + (new_topics_length > 0 ? " color: rgb(236, 236, 236);" : "") + '"><span>Open new topics of this group (</span><span id="' + containerId + '"></span><span>)</span></span></div>')
+        );
+    }
 
-            if (!is_section_already_hidden() && new_topics_length <= open_topics_max_count) {
-                $(custom_selector + ' > .list_bar_h').trigger("click")
-            }
-        })
-    );
+    // create array of subgroups to be clicked on
+    const container = $(`span#${containerId}`);
+    for (let i = 0; i < new_topics_length; i += open_topics_max_count) {
+        const new_topics_slice = new_topics.slice(-i - open_topics_max_count, i === 0 ? undefined : -i); // -0 is not valid, use undefined instead;
+        const new_topics_slice_length = new_topics_slice.length;
+
+        if (i != 0) {
+            container.append(
+                $('<span>, </span>')
+            );
+        }
+        container.append(
+            $(`<a>[${i + 1}-${i + new_topics_slice_length}]</a>`)
+              .on('click', {topics: new_topics_slice}, open_urls_in_new_tabs_callback)
+        );
+    }
+    container.removeAttr('id');
 }
 function open_urls_in_new_tabs(funcEvent) {
     funcEvent.preventDefault();
@@ -551,14 +629,20 @@ function forum_main_page_add_show_more_observers(calledByThisFeatureKey) {
                     $('div.module.topics div.module_in > div#recentTopics').html(sorted);
 
                     if (settings.get('forum-add-open-new-topics-links')) {
-                        $('div.module.topics div.module_in > h2:eq(1) > span.text:last').remove();
+                        // remove previously generated spans
+                        $('div.module.topics div.module_in > h2:eq(1) > span.text:eq(0) > span.text').remove();
+                        $('div.module.topics div.module_in > h2:eq(1) > input + span.text:last').remove();
+
                         add_link_forum_main_page(':eq(1)', 'input#moreRecentPage');
                     }
                 }
                 break;
             case "forum-add-open-new-topics-links":
                 if (!settings.get('forum_make_show_more_buttons_get_all_topics')) {
-                    $('div.module.topics div.module_in > h2:eq(1) > span.text:last').remove();
+                    // remove previously generated spans
+                    $('div.module.topics div.module_in > h2:eq(1) > span.text:eq(0) > span.text').remove();
+                    $('div.module.topics div.module_in > h2:eq(1) > input + span.text:last').remove();
+
                     add_link_forum_main_page(':eq(1)', 'input#moreRecentPage');
                 }
                 break;
@@ -577,14 +661,20 @@ function forum_main_page_add_show_more_observers(calledByThisFeatureKey) {
                     $('div.module.topics div.module_in > div#hotTopics').html(sorted);
 
                     if (settings.get('forum-add-open-new-topics-links')) {
-                        $('div.module.topics div.module_in > h2:eq(2) > span.text:last').remove();
+                        // remove previously generated spans
+                        $('div.module.topics div.module_in > h2:eq(2) > span.text:eq(0) > span.text').remove();
+                        $('div.module.topics div.module_in > h2:eq(2) > input + span.text:last').remove();
+
                         add_link_forum_main_page(':eq(2)', 'input#moreMostPopularPage');
                     }
                 }
                 break;
             case "forum-add-open-new-topics-links":
                 if (!settings.get('forum_make_show_more_buttons_get_all_topics')) {
-                    $('div.module.topics div.module_in > h2:eq(2) > span.text:last').remove();
+                    // remove previously generated spans
+                    $('div.module.topics div.module_in > h2:eq(2) > span.text:eq(0) > span.text').remove();
+                    $('div.module.topics div.module_in > h2:eq(2) > input + span.text:last').remove();
+
                     add_link_forum_main_page(':eq(2)', 'input#moreMostPopularPage');
                 }
                 break;
@@ -722,7 +812,7 @@ var style_discount_colour_large = '#2ca3c3'
 var style_discount_colour_medium = '#58b600'
 var style_discount_colour_small = '#9b8e02'
 
-const open_topics_max_count = 15;
+const open_topics_max_count = 10;
 const months = {
     Jan: 0,
     Feb: 1,
@@ -825,7 +915,7 @@ config = {
         {"type": "multibool", "options": {"Download Galaxy 1.2": true, "Download Galaxy 2.0": true, "Cloud saves": true}, "key": "navbar-about-galaxy-links", "label": "About menu Galaxy links"},
         {"type": "multibool", "options": {"GOG Patrons Hub": true, "GOG Patrons Amount": true}, "key": "navbar-about-patrons-links", "label": "About menu patrons links"},
         {"type": "choice", "options": ["All forums", "General forum", "Forum replies", "Chat", "Friends"], "def": "All forums", "key": "navbar-community-menu-link", "label": "Clicking on \"Community\" takes you to"},
-        {"type": "multibool", "options": {"General discussion forum": false, "Forum replies": false, "GOG Patrons Hub": false, "Facebook": true, "Twitter": true, "Twitch": true}, "key": "navbar-community-links", "label": "Community menu links"},
+        {"type": "multibool", "options": {"General discussion forum": false, "Forum replies": false, "GOG Patrons Hub": false, "Facebook": true, "Twitter/X": true, "Twitch": true, "Youtube: trailers": true, "Youtube: classics vault": true}, "key": "navbar-community-links", "label": "Community menu links"},
         {"type": "multibool", "options": {"General discussion forum": true, "GOG GALAXY forum": true, "Forum replies/My posts": true, "My questions": true, "My forum settings": true}, "key": "navbar-community-forums-links", "label": "Community menu forums links"},
         {"type": "multibool", "options": {"Refresh account data": true, "Refresh user data": true}, "key": "navbar-support-account-links", "label": "Support menu account links"},
         {"type": "choice", "options": ["Activity feed", "Profile", "Games library"], "def": "Activity feed", "key": "navbar-account-menu-link", "label": "Clicking on your account takes you to your"},
@@ -838,6 +928,19 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2q",
+		"date": "2026-04-13",
+        "changes": [
+			"Fixed ability to set visibility of newest GOG community links.",
+            "Hid redundant favourite sticky forum topics from default list.",
+            "Add amount of topics to GOG default lists' headers (including main page).",
+            "Revised forum group links:",
+            "- don't generate the link if there is no new topics.",
+            "- improved to include multiple ranges.",
+            "- each range will be crossed out if clicked.",
+        ]
+	},
 	{
 		"version": "3.0.2pb",
 		"date": "2026-04-01",
@@ -2596,6 +2699,19 @@ function feature_forum_detect_necro() {
 	setTimeout(settings.onchange.bind(settings, 'forum-detect-necro', on_update), 1)
 
 }
+
+function feature_forum_group_intro() {
+    // exclude favourite redundant sticky topics
+    const fav_hrefs = $('#t_fav').find('div.topic_s > a').map(function() { return this.href; }).get();
+	$('#t_norm').find('div.topic_s > a:visible').each(function() {
+		if (/sticky:/i.test(this.text)) {
+			const sticky_href = this.href;
+            if (fav_hrefs.includes(sticky_href)) {
+                $(this).closest('.list_row_odd').hide();
+            }
+		}
+	});
+}
 function feature_forum_group_delistings() {
 
 	function on_update(value) {
@@ -3427,6 +3543,19 @@ function feature_forum_group_heavily_discussed() {
 	settings.onchange('forum-group-heavily-discussed', on_update);
 
 }
+function feature_forum_group_outro() {
+
+    function append_group_topics_amount_text(selector_name, only_visible) {
+        $(`${selector_name} > div.list_bar_h > div:nth-child(1 of .lista_bar_text)`).append(
+            $(`<span> (${$(`${selector_name} > div.list_row_h > div.list_row_odd${only_visible ? ":visible" : ""}`).length})</span>`)
+        );
+    }
+
+    // add amount of topics to GOG initial groups
+    append_group_topics_amount_text('#t_fav', false);
+    append_group_topics_amount_text('#t_norm', true);
+}
+
 function feature_forum_move_edit_note() {
 
 	function on_update(value) {
@@ -5012,7 +5141,8 @@ function feature_navbar_theme() {
                     +"  text-align: center;"
                     +"  line-height: 0px;"
                     +"}"
-					+"body nav > div.menu__container > div.menu-tray > div.menu-item               > a.menu-link > svg.menu-icon-svg,"
+					+"body nav > div.menu__container > div.menu-main > div.menu-item > a.menu-link > svg.menu-link__dropdown-icon,"
+					+"body nav > div.menu__container > div.menu-tray > div.menu-item > a.menu-link > svg.menu-icon-svg,"
 					+"body nav > div.menu__container > div.menu-tray > div.menu-item.js-menu-search > div.menu-submenu.menu-search > div.menu-search-toolbar > svg.menu-search-icon,"
 					+"body nav > div.menu__container > div.menu-tray > div.menu-item.js-menu-search > div.menu-submenu.menu-search > div.menu-search-toolbar > a.menu-search-toolbar__close > svg.menu-icon-svg {"
                     +"  fill: #d54dff;"
@@ -5227,13 +5357,17 @@ function feature_nav_community_links() {
 		gog_forums_replies.toggle(value["Forum replies"]);
 		gog_patrons_hub   .toggle(value["GOG Patrons Hub"]);
 
-		facebook.toggle(value["Facebook"]);
-		  twitch.toggle(value["Twitch"  ]);
-		 twitter.toggle(value["Twitter" ]);
+		facebook  .toggle(value["Facebook"]);
+		twitter   .toggle(value["Twitter/X"]);
+		twitch    .toggle(value["Twitch"]);
+		youtube   .toggle(value["Youtube: trailers"]);
+		youtube_cv.toggle(value["Youtube: classics vault"]);
 
 		separator.toggle(value["Facebook"]
-                      || value["Twitter" ]
-                      || value["Twitch"  ]);
+                      || value["Twitter/X"]
+                      || value["Twitch"]
+                      || value["Youtube: trailers"]
+                      || value["Youtube: classics vault"]);
 		
 	}
 	function on_community_forums_update(value) {
@@ -5286,9 +5420,11 @@ function feature_nav_community_links() {
     var gog_forums_replies = community_menu.find('a.menu-submenu-link[href="/forum/myrecentposts"]').parent();
     var gog_patrons_hub    = community_menu.find('a.menu-submenu-link[href$="/gog-patrons-hub"]'   ).parent();
 
-	var facebook = community_menu.find('a.menu-submenu-link[href="https://www.facebook.com/gogcom"]').parent();
-	var twitter  = community_menu.find('a.menu-submenu-link[href="https://twitter.com/GOGcom"]'     ).parent();
-	var twitch   = community_menu.find('a.menu-submenu-link[href="https://www.twitch.tv/gogcom"]'   ).parent();
+	var facebook   = community_menu.find('div.menu-submenu-item[hook-test="communityMenu-facebook"         ]:has(> a.menu-submenu-link)');
+	var twitter    = community_menu.find('div.menu-submenu-item[hook-test="communityMenu-x"                ]:has(> a.menu-submenu-link)');
+	var twitch     = community_menu.find('div.menu-submenu-item[hook-test="communityMenu-twitch"           ]:has(> a.menu-submenu-link)');
+	var youtube    = community_menu.find('div.menu-submenu-item[hook-test="communityMenu-yt"               ]:has(> a.menu-submenu-link)');
+	var youtube_cv = community_menu.find('div.menu-submenu-item[hook-test="communityMenu-yt-classics-vault"]:has(> a.menu-submenu-link)');
 	var separator = facebook.prev('.menu-submenu-separator');
 
     // community forums links
@@ -5966,6 +6102,7 @@ $(window).on('load', function() {
                 feature_forum_add_open_new_group_topics_links("forum-main-page");
                 feature_forum_make_show_more_buttons_get_all_topics();
                 if (/^\/forum\/[^/]*(?:\/(?:page[0-9]+)?)?$/.test(window.location.pathname) && !location.pathname.startsWith('\/forum\/ajax\/popUp')) {
+                    feature_forum_group_intro();
                     feature_forum_group_delistings();
                     feature_forum_group_stickies();
                     feature_forum_group_news();
@@ -5973,6 +6110,8 @@ $(window).on('load', function() {
                     feature_forum_group_forumgames();
                     feature_forum_group_spams();
                     feature_forum_group_heavily_discussed();
+                    feature_forum_group_outro();
+
                     feature_forum_old_gog_avatar();
                     feature_forum_remove_fragment();
                     feature_forum_theme();
