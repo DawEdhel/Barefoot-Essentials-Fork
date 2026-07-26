@@ -6,7 +6,7 @@
 // @include        https://www.gog.com/*
 // @exclude        https://www.gog.com/upload/*
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @version        3.0.2q
+// @version        3.0.2r
 // @updateURL      https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @downloadURL    https://dawedhel.github.io/Barefoot-Essentials-Fork/BE.js
 // @supportURL     https://github.com/DawEdhel/Barefoot-Essentials-Fork/issues
@@ -21,7 +21,7 @@
 // ==/UserScript==
 
 var branch = 'Barefoot Monkey/GreaseMonkey'
-var version = '3.0.2q'
+var version = '3.0.2r'
 var default_prev_version = '2.27.1'	// On first use, all versions after this will be shown in the changelog
 var last_BE_version
 
@@ -110,12 +110,12 @@ function inject_request(args) {
 			}
 		}
 	}
-	
+
 	var callback = gen_callback(args, script, meta)
 
 	var observer = new MutationObserver(callback)
 	observer.observe(meta, {attributes: true})
-	
+
 	document.body.appendChild(script)
 }
 
@@ -197,15 +197,15 @@ function submit_quick_post() {
 		$('.kontent>.submit>div.gog_btn:first-child').click()
 	} else {
 		var post_text_e = $('.quick_post textarea')
-	
+
 		if (post_text_e.length < 1 || post_text_e.val() == '') return
-	
+
 		var post_text = post_text_e.val()
 		var reply_to = post_text.match(/\[quote_([0-9]+)\]/)
 		var reply_to_pid = (reply_to === null) ? undefined : reply_to[1]
-					
+
 		$('.submit-quick-post')[0].disabled = true
-					
+
 		// submit the post
 		submit_quick_post.submitted = true
 		$.ajax({
@@ -252,7 +252,7 @@ function tag_input_text(input, begin_tag, end_tag) {
 		+ end_tag
 		+ input.value.substring(end)
 	)
-						
+
 	input.selectionStart = start + begin_tag.length
 	input.selectionEnd = end + begin_tag.length
 }
@@ -263,10 +263,10 @@ function parse_node(node) {
 			return node.nodeValue
 		}
 		case 1: { // element
-			
+
 			var result = ""
 			var after = ""
-			
+
 			if (node.tagName == 'BR') return "\n"
 			else if (node.tagName == 'DIV') {
 				if (node.classList.contains('post_text_c')) {
@@ -286,14 +286,14 @@ function parse_node(node) {
 					after = "[/b]"
 				} else return ""
 			} else return ""
-			
-			
+
+
 			var child = node.firstChild
 			while (!!child) {
 				result += parse_node(child)
 				child = child.nextSibling
 			}
-			
+
 			return result + after
 		}
 	}
@@ -306,26 +306,32 @@ function parse_post(post) {
 function post_keydown_handler(event) {
 	if (event.ctrlKey && !event.altKey) {
 		switch (event.which) {
+            // ctrl + B|Numpad2
 			case 66:
 			case 98: if (!event.repeat) tag_input_text(this, '[b]', '[/b]'); event.preventDefault(); break
-					
+
+            // ctrl + U|F6
 			case 85:
 			case 117: if (!event.repeat) tag_input_text(this, '[u]', '[/u]'); event.preventDefault(); break
-					
+
+            // ctrl + I|Numpad9
 			case 73:
 			case 105: if (!event.repeat) tag_input_text(this, '[i]', '[/i]'); event.preventDefault(); break
-					
+
+            // ctrl + L|NumpadEnter
 			case 76:
 			case 108: if (!event.repeat) tag_input_text(this, '\n\n[spoiler]\n\n\n\n', '\n\n\n\n[/spoiler]\n\n'); event.preventDefault(); break
-					
+
+            // ctrl + Q|F2
 			case 81:
 			case 113: if (!event.repeat) tag_input_text(this, '[quote]', '[/quote]'); event.preventDefault(); break
-					
+
+            // ctrl + Y|F10
 			case 89:
 			case 121: {
 				if (!event.repeat) {
 					var selected_text = this.value.substring(this.selectionStart, this.selectionEnd)
-							
+
 					var url = prompt("Enter the URL for the link", selected_text)
 					if (!!url) {
 						tag_input_text(this, '[url='+encodeURI(url)+']', '[/url]')
@@ -334,69 +340,70 @@ function post_keydown_handler(event) {
 				event.preventDefault()
 				break
 			}
-					
+
+            // ctrl + Enter
 			case 13: {
 				if (!event.repeat) submit_quick_post();
 				event.preventDefault()
 				break
 			}
-					
+
 			default: return true
 		}
-		
+
 		event.stopPropagation();
 		show_preview()
-				
+
 		return false
 	}
 }
 function post_preview_html(source) {
 	var tokenexp = /\[\/?(?:[ibu]|(?:url(?:=[^\n\]]*)?|quote(?:_[0-9]*)?))\]/g
-	
+
 	var text_tokens = source.split(tokenexp)
 	if (!text_tokens) text_tokens = []
 	var tag_tokens = source.match(tokenexp)
 	if (!tag_tokens) tag_tokens = []
-	
+
 	var text_i = 0, tag_i = 0
 	var tag_stack = []
 	var preview = ""
 	var top_tag = null
 	var ignore_first_linebreak = false;
-	
+
 	while (true) {
 		if (text_i < text_tokens.length) {
-		
+
 			var text_token = text_tokens[text_i++]
 			.replace(/&/g, '&amp;')
 			.replace(/\>/g, '&gt;')
 			.replace(/\</g, '&lt;')
 			.replace(/\n/g, '<br/>')
-			
+
 			preview += ignore_first_linebreak ? text_token.replace(/^<br\/>/, '') : text_token
-			
+
 		} else break;
-		
+
 		if (tag_i < tag_tokens.length) {
-		
-			var tag = tag_tokens[tag_i++].match(/^\[(\/?)([^=_\]]*)(?:[=_](.*))?\]/)			
+
+			var tag = tag_tokens[tag_i++].match(/^\[(\/?)([^=_\]]*)(?:[=_](.*))?\]/)
 			if (tag[2] === undefined) continue
-			
+
 			ignore_first_linebreak = false
-			
+
 			if (tag[1] == '/') {
-			
+
 				if (!!top_tag) {
 					preview += top_tag.closing
-					
+
 					if (top_tag.tag == 'quote') ignore_first_linebreak = true
-					
+
 					if (tag[2] != top_tag.tag)
 					preview += '<span class="syntax-warning">[/'+top_tag.tag+']</span>';
-					
+
 					top_tag = tag_stack.pop()
 				}
-				
+
 			} else {
 				tag_stack.push(top_tag)
 				switch (tag[2]) {
@@ -832,7 +839,7 @@ function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
 }
 function isCurrentPageMainPage() {
-  return $('div.news-section-wrapper').length || $('news-section').length;
+  return !!$('div.news-section-wrapper') || !!$('news-section');
 }
 
 /*-- utility functions --*/
@@ -884,21 +891,25 @@ config = {
 		{"type": "bool", "def": false, "key": "forum-show-hover-elements", "label": "Always show on-hover elements in forum posts", "comment": "Online/Offline status, PM button, and post link number"},	
 		{"type": "choice", "options": ["None", "Community Wishlist"], "def": "None", "key": "forum-theme", "label": "Custom forum theme", "comment": "Custom themes are still a work-in-progress. Changes the appearance of the forum."},	
 		{"type": "bool", "def": true, "key": "forum-hide-spoilers", "label": "hide spoilers"},	
-		{"type": "bool", "def": true, "key": "forum-post-preview", "label": "preview on post/reply window"},
-     	        {"type": "bool", "def": true, "key": "forum-add-open-new-topics-links", "label": "Add 'Open new topics of this group' links"},
-                {"type": "bool", "def": true, "key": "forum_make_show_more_buttons_get_all_topics", "label": "Make 'show more' buttons on main page to get all topics, sorted by 'Last update', on a single click"},
-        	{"type": "bool", "def": true, "key": "forum_expand_popups_to_fit_content", "label": "Expand thread/post popups to fit content"},
-                {"type": "bool", "def": true, "key": "forum-mark-new-user-posting", "label": "Mark new users' posts"},
+        {"type": "bool", "def": true, "key": "forum-post-preview", "label": "preview on post/reply window"},
+        {"type": "bool", "def": true, "key": "forum-add-open-new-topics-links", "label": "Add 'Open new topics of this group' links"},
+        {"type": "bool", "def": true, "key": "forum_make_show_more_buttons_get_all_topics", "label": "Make 'show more' buttons on main page to get all topics, sorted by 'Last update', on a single click"},
+        {"type": "bool", "def": true, "key": "forum_expand_popups_to_fit_content", "label": "Expand thread/post popups to fit content"},
+        {"type": "bool", "def": true, "key": "forum-mark-new-user-posting", "label": "Mark new users' posts"},
+        {"type": "bool", "def": true, "key": "forum-add-gallery-of-post-images-section", "label": "Add 'gallery of post images' section"},
+        {"type": "bool", "def": false, "key": "forum-expand-gallery-of-post-images-section", "label": "Expand 'gallery of post images' section initially"},
+        {"type": "bool", "def": true, "key": "forum-add-list-of-post-links-section", "label": "Add 'list of post links' section"},
+        {"type": "bool", "def": true, "key": "forum-expand-list-of-post-links-section", "label": "Expand 'list of post links' section initially"},
 	],
 	"Misc": [
 		{"type": "choice", "options": ["light"], "def": "light", "key": "BE-style", "label": "Barefoot Essentials style"},
-		{"type": "bool", "def": true, "key": "connect-autocheck", "label": "Automatically check for GOG Connect offers"},
-		{"type": "choice", "options": ["current", "v1", "v2", "v3"], "def": "v1", "key": "favicon", "label": "Favicon"},
-        {"type": "multibool", "options": {"GOG Database": true, "Gamesieve": true, "Steam Database": true, "PCGamingWiki": true, "Wikipedia": true}, "def": "GOG.com", "key": "gamecard-additional-information-links", "label": "Additional information links"},	
-		{"type": "bool", "def": true, "key": "gamecard-show-descriptions", "label": "Automatically expand game and movie descriptions"},
-                {"type": "bool", "def": true, "key": "gamecard-compact-hltb-section", "label": "Compact the HowLongToBeat section"},
+        //{"type": "bool", "def": false, "key": "connect-autocheck", "label": "Automatically check for GOG Connect offers"},
+        {"type": "choice", "options": ["current", "v1", "v2", "v3"], "def": "v1", "key": "favicon", "label": "Favicon"},
+        {"type": "multibool", "options": {"GOG Database": true, "Gamesieve": true, "Steam Database": true, "PCGamingWiki": true, "Wikipedia": true}, "def": "GOG.com", "key": "gamecard-additional-information-links", "label": "Additional information links"},
+        {"type": "bool", "def": true, "key": "gamecard-show-descriptions", "label": "Automatically expand game and movie descriptions"},
+        {"type": "bool", "def": true, "key": "gamecard-compact-hltb-section", "label": "Compact the HowLongToBeat section"},
         {"type": "bool", "def": true, "key": "gamecard-autocancel-new-review-form", "label": "Autocancel the new review form on page load"},
-                {"type": "bool", "def": true, "key": "main-page-move-compacted-news-section-to-the-top", "label": "Move compacted news section to the top of the main page"},
+        {"type": "bool", "def": true, "key": "main-page-move-compacted-news-section-to-the-top", "label": "Move compacted news section to the top of the main page"},
 	],
 	"Navigation bar": [
         {"type": "choice", "options": ["fixed (normal)", "absolute"], "def": "fixed (normal)", "key": "navbar-position", "label": "Navigation bar position"},
@@ -928,6 +939,17 @@ config = {
 	],
 }
 var changelog = [
+	{
+		"version": "3.0.2r",
+		"date": "2026-07-26",
+        "changes": [
+			"Fixed moving news section to the top option, due to the newest frontpage version.",
+			"Disabled deprecated auto-check for GOG Connect offers.",
+			"Added a mention of an already existing quote shortcut to the shortcut list of the slightly visually updated quick-post section.",
+			"Added an option to add a gallery of images for each forum post, with a separated content's initial expandability option.",
+			"Added an option to add a list of links for each forum post, with a separated content's initial expandability option.",
+        ]
+	},
 	{
 		"version": "3.0.2q",
 		"date": "2026-04-13",
@@ -1755,7 +1777,7 @@ var settings = {
 						}
 						if (!valid) setting.value = item.def
 					}
-					
+
 					if (item.type == 'multibool') {
 						if (setting.value === undefined) {
 							setting.value = item.options
@@ -1840,13 +1862,13 @@ var popup = {
 					var p = $('<h2>')
 					.text("Version " + entry.version)
 					.append($('<small>').text(" - released on " + entry.date))
-					
+
 					var list = $('<ul>').addClass('BE-changelog')
-					
+
 					entry.changes.forEach(function(change) {
 						$('<li>').html(change).appendTo(list)
 					})
-					
+
 					if (entry.version == version || cmpVersion(last_BE_version, entry.version) < 0) {
 						root.append(p, list)
 					} else {
@@ -1973,15 +1995,15 @@ function feature_avatar_zoom() {
 		var src = img.attr('src')
 
 		if (!img.data('BE-zoomed')) {
-		
+
 			img.data('BE-zoomed', true)
-			
+
 			// clear all fullsize avatars
 			$('.BE-fullsize-avatar').data('BE-thumb', null).remove()
 			$('.b_p_avatar_h img').data('BE-zoomed', false)
-		
+
 			var post = img.closest('.spot_h')
-			
+
 			var fullsize = $('<img alt="" class="BE-fullsize-avatar">')
 			.attr('src', src.replace(/_forum_avatar\.jpg$/, '.jpg'))
 			.insertBefore(post)
@@ -1990,9 +2012,9 @@ function feature_avatar_zoom() {
 				$(this).data('BE-thumb', null)
 				$(this).remove()
 			})
-			
+
 			fullsize.data('BE-thumb', img)
-			
+
 		}
 	})
 
@@ -2273,7 +2295,7 @@ function feature_connect_autocheck() {
 
 			if (value && !feature_connect_autocheck.already_checked) {
 				feature_connect_autocheck.already_checked = true
-			
+
 				if (user_info && user_info.id) inject_request({
 					method: "GET",
 					url: "/api/v1/users/"+user_info.id+"	/gogLink/steam/exchangeableProducts",
@@ -2483,7 +2505,7 @@ function feature_embed_youtube() {
 			.on('mouseenter', highlight_link)
 			.on('mouseleave', unhighlight_link)
 			.appendTo(videos)
-			
+
 		}
 	}
 
@@ -2548,7 +2570,7 @@ function feature_enhance_bold_text() {
 		else style.text('')
 	}
 	var style = $('<style>').appendTo(document.head)
-	
+
 	settings.onchange('forum-bold-text', on_update)
 
 }
@@ -2997,7 +3019,7 @@ function feature_forum_group_news() {
 	}
 
 	var setting = settings.get('forum-group-news')
-	
+
 	var news_topics = $('<div class="favourite_h BE-news-topics">')
 
 	var list = $('<div class="list_row_h">')
@@ -3021,7 +3043,7 @@ function feature_forum_group_news() {
 			$('<div class="lista_bar_text">').text("Topics which appear to be news ("+news_count+")")
 		)
 		.css('cursor', 'pointer')
-	
+
 		news_topics
 		.append(bar, list)
 	}
@@ -3104,7 +3126,7 @@ function feature_forum_group_giveaways() {
 	}
 
 	var setting = settings.get('forum-group-giveaways')
-	
+
 	var giveaway_topics = $('<div class="favourite_h BE-giveaway-topics">')
 
 	var list = $('<div class="list_row_h">')
@@ -3128,7 +3150,7 @@ function feature_forum_group_giveaways() {
 			$('<div class="lista_bar_text">').text("Topics which appear to be giveaways ("+giveaway_count+")")
 		)
 		.css('cursor', 'pointer')
-	
+
 		giveaway_topics
 		.append(bar, list)
 	}
@@ -3211,7 +3233,7 @@ function feature_forum_group_forumgames() {
 	}
 
 	var setting = settings.get('forum-group-forumgames')
-	
+
 	var forumgame_topics = $('<div class="favourite_h BE-forumgame-topics">')
 
 	var list = $('<div class="list_row_h">')
@@ -3235,7 +3257,7 @@ function feature_forum_group_forumgames() {
 			$('<div class="lista_bar_text">').text("Topics which appear to be forum games ("+forumgame_count+")")
 		)
 		.css('cursor', 'pointer')
-	
+
 		forumgame_topics
 		.append(bar, list)
 	}
@@ -3343,7 +3365,7 @@ function feature_forum_group_spams() {
     .filter(item => item.count >= 3)
     .map(item => item.id);
 
-	$('#t_norm .list_row_odd .created_by > span.user[gog-user]').each(function() {
+	$('#t_norm .list_row_odd:visible .created_by > span.user[gog-user]').each(function() {
 		if ($.inArray($(this).attr("gog-user"), spam_users) > -1) {
 			var row = $(this).closest('.list_row_odd')
 			row.clone().appendTo(list)
@@ -3645,7 +3667,7 @@ function feature_forum_old_gog_avatar() {
 
 	var style = $("<style>")
 	.text(".general_img { background: url(https://images.gog.com/9b1aae00838bf648d83b017801d926f025abf226278d1263e20fd8d0df154445_forum_avatar.jpg) 0 0; background-size: 100%; }")
-	
+
 	settings.onchange('forum-old-gog-avatar', on_update)
 
 }
@@ -3709,13 +3731,13 @@ function feature_forum_quick_post() {
 				+	'border: 1px solid '+((forum_skin==0)?'#DBDBDB': '#4C4C4C')+';'
 				+'}'
 				+'.quick_post textarea:focus {'
-				+	'height: 150px;'
+				+	'height: 158px;'
 				+'}'
 				+'.quick_post textarea {'
 				+	'background: none repeat scroll 0 0 '+((forum_skin==0)?'#676767': '#D1D1D1')+';'
 				+	'border: 1px solid '+((forum_skin==0)?'#929292': '#929292')+';'
 				+	'color: ' + ((forum_skin==0)?'#DBDBDB':'#4C4C4C')+';'
-				+	'height: 150px;'
+				+	'height: 158px;'
 				+	'transition: height 0.5s ease 0s;'
 				+	'margin: 0 0 5px 168px;'
 				+	'padding: 2px;'
@@ -3766,10 +3788,12 @@ function feature_forum_quick_post() {
 				+	'transition: color 0.3s ease;'
 				+'}'
 				+'.quick_post div.submit {'
-				+	'float: right;'
-				+	'clear: none;'
-				+	'overflow: visible;'
-				+	'padding: 11px 3px 0 0;'
+                +	'clear: none;'
+                +	'overflow: visible;'
+                +	'padding: 0px 3px 0 0;'
+                +	'width: stretch;'
+                +	'display: flex;'
+                +	'justify-content: flex-end;'
 				+'}'
 				+'.big_post_h:hover .BE-quick-reply {'
 				+	'display: inline-block;'
@@ -3798,14 +3822,14 @@ function feature_forum_quick_post() {
 				.text('quick reply')
 				.appendTo(this)
 				.click(function() {
-				
+
 					window.scrollTo(0, $('.quick_post').position().top - Math.round(window.innerHeight*0.4))
-					
+
 					var textarea = $('.quick_post textarea').focus()
-					
+
 					var quoted = $(this).closest('.big_post_h')
 					var quote_nr = quoted.find('.post_nr').text()
-					
+
 					var val = textarea.val()
 					textarea.val(
 						((val.length==0)?"":(val+"	\n\n"))
@@ -3813,7 +3837,7 @@ function feature_forum_quick_post() {
 						+ parse_post(quoted)
 						+'[/quote]\n'
 					)
-					
+
 					show_preview()
 				})
 			})
@@ -3844,18 +3868,22 @@ function feature_forum_quick_post() {
 			+'<p><key>Ctrl</key> <key>I</key>: Italic</p>'
 			+'<p><key>Ctrl</key> <key>B</key>: Bold</p>'
 			+'<p><key>Ctrl</key> <key>U</key>: Underline</p>'
+			+'<div style="height: 2px;" />'
 			+'<p><key>Ctrl</key> <key>Y</key>: Hyperlink</p>'
+			+'<p><key>Ctrl</key> <key>Q</key>: Quote</p>'
 			+'<p><key>Ctrl</key> <key>L</key>: Spoiler</p>'
+			+'<div style="height: 2px;" />'
 			+'<p><key>Ctrl</key> <key>Enter</key>: Submit</p>'
 			+'</div>',
 
 			new_post,
-			
+
 			$('<div class="submit">')
 			.append(
 				post_button
 			),
-			
+
+			'<div><hr style="color: darkgrey; background-color: darkgrey; border-color: darkgrey;"></div>',
 			$('<h1>').text('Preview'),
 			preview
 		)
@@ -3868,14 +3896,15 @@ function feature_forum_quick_post() {
 
 		// handle shortcut keys in quick post
 		new_post.keydown(post_keydown_handler)
-		
+
 		// refresh the preview on quic post input
 		new_post[0].addEventListener('input', show_preview)
-		
+
 		post_button.click(submit_quick_post)
 	}
 
 	$(document).keydown(function(event) {
+        // ctrl + space
 		if (event.ctrlKey && !event.altKey && !event.repeat && event.which == 32) {
 			window.scrollTo(0, $('.quick_post').position().top - Math.round(window.innerHeight*0.4))
 			$('.quick_post textarea').focus()
@@ -4648,20 +4677,20 @@ function feature_hide_spoilers() {
 		var openings = []
 		for (var n = parent.firstChild; n !== null; n = n.nextSibling) {
 			if (n.nodeType == 3) {
-				
+
 				if (/^\s*\[spoiler\]\s*$/.test(n.nodeValue)) {
 					openings.push(n)
 				} else if (/^\s*\[\/spoiler\]\s*$/.test(n.nodeValue)) {
 					var opening = openings.pop()
 					if (opening === null) continue
-					
+
 					var spoiler_button = $('<button class="BE-button">')
 					.text("show spoiler")
 					.click(toggle_spoiler)
 					.insertBefore(opening)
 					var spoiler_content = $('<div class="BE-spoiler">')
 					.insertAfter(spoiler_button)
-					
+
 					var next = opening.nextSibling
 					for (nn = opening; nn !== null; nn = next) {
 						next = nn.nextSibling
@@ -4669,7 +4698,7 @@ function feature_hide_spoilers() {
 						if (nn !== opening && nn !== n) spoiler_content.append(nn)
 						if (nn === n) break
 					}
-					
+
 					n = spoiler_content.get(0)
 				}
 			} else if (n.nodeType == 1) {
@@ -4683,11 +4712,11 @@ function feature_hide_spoilers() {
 			traverse_to_hide_spoilers(this)
 		}
 	})
-	
+
 	// remove all extra linebreaks around spoilers
 	$('.BE-button').each(function() {
 		for (var prev = this.previousSibling; prev; prev = this.previousSibling) {
-		
+
 			if (prev.nodeType == 1) {
 				if (prev.nodeName != 'BR') break
 			} else if (prev.nodeType == 3) {
@@ -4697,10 +4726,10 @@ function feature_hide_spoilers() {
 		}
 	})
 	$('.BE-spoiler').each(function() {
-	
+
 		// strip after the spoiler
 		for (var next = this.nextSibling; next; next = this.nextSibling) {
-		
+
 			if (next.nodeType == 1) {
 				if (next.nodeName != 'BR') break
 			} else if (next.nodeType == 3) {
@@ -4708,7 +4737,7 @@ function feature_hide_spoilers() {
 			} else break
 			this.parentElement.removeChild(next)
 		}
-		
+
 		// strip the front
 		for (var next = this.firstChild; next; next = this.firstChild) {
 			if (next.nodeType == 1) {
@@ -4762,7 +4791,7 @@ function feature_navbar_position() {
 		}
 	}
 	var style = $('<style>').appendTo(document.head)
-	
+
 	settings.onchange('navbar-position', on_update)
 
 }
@@ -5368,7 +5397,7 @@ function feature_nav_community_links() {
                       || value["Twitch"]
                       || value["Youtube: trailers"]
                       || value["Youtube: classics vault"]);
-		
+
 	}
 	function on_community_forums_update(value) {
 
@@ -5461,8 +5490,8 @@ function feature_nav_community_links() {
     const community_forums_replies_callback = (mutations) => {
         for (const mutation of mutations) {
             if (mutation.type === "attributes") {
-                const oldValueContainsNotifDot = mutation.oldValue        .includes(community_forums_replies_classPendingNotifs);
-                const newValueContainsNotifDot = mutation.target.classList.contains(community_forums_replies_classPendingNotifs);
+                const oldValueContainsNotifDot = (mutation.oldValue  ?? "").includes(community_forums_replies_classPendingNotifs);
+                const newValueContainsNotifDot =  mutation.target.classList.contains(community_forums_replies_classPendingNotifs);
 
                 if      (!oldValueContainsNotifDot &&  newValueContainsNotifDot) {
                     $('> a', community_forums_replies).   addClass(community_forums_replies_classPendingNotifs);
@@ -5622,7 +5651,7 @@ function feature_nav_display_notifications() {
 						var parser = new DOMParser();
 						var root = parser.parseFromString(response.responseText, "text/html");
 						var element = root.querySelector('#mainTemplateHolder>.sta_container>.hr>a.replies b')
-						
+
 						if (element) {
 
 							user_info.updates.messages = Number.parseInt(element.textContent.trim().replace(/[^0-9]*$/, ''))
@@ -5707,8 +5736,8 @@ function feature_nav_display_notifications() {
 			+"	bottom: 1px;"
 			+"}"			
 		)
-                .appendTo(document.head)
-		
+		.appendTo(document.head)
+
 		if (user_info.updates.forum === undefined) scrape_forum_replies()
 		setTimeout(settings.onchange.bind(settings, 'nav-display-notifications', on_update), 1)
 	})
@@ -5792,7 +5821,7 @@ function feature_nav_notification_dot() {
 		+"} "
 
 		style.text(rules)
-	
+
 	}
 
 	var style = $('<style>').appendTo(document.head)
@@ -5839,10 +5868,10 @@ function feature_post_preview() {
 
 			var message = document.getElementById('text')
 			var preview = $('<p class="BE-preview">').insertAfter($('.kontent>.submit'))
-		
+
 			var refresh_preview = function() {
 				var text = post_preview_html(message.value)
-			
+
 				preview.html(text)
 			}
 
@@ -5853,10 +5882,10 @@ function feature_post_preview() {
 				'height': 'auto',
 				'top': preview.offset().top + 'px'
 			})
-		
+
 			$(message).keydown(post_keydown_handler)
 			message.addEventListener('input', refresh_preview)
-		
+
 			$('.btn_h>.btn').click(refresh_preview)
 
 			refresh_preview()
@@ -5867,7 +5896,7 @@ function feature_post_preview() {
 	}
 
 	var style = $('<style>').appendTo(document.head)
-	
+
 	settings.onchange('forum-post-preview', on_update)
 
 }
@@ -5946,7 +5975,7 @@ function feature_promo_show_discount() {
 			var new_price = this.querySelector('.product-row-price--new>._price')
 			if (old_price && new_price) {
 				price_map.set(new_price, old_price)
-				
+
 				var observer = new MutationObserver(mutation_callback.bind(old_price))
 				observer.observe(new_price, {childList: true})
 				update_price(old_price, new_price)
@@ -6015,6 +6044,71 @@ function feature_forum_mark_new_users_posts() {
 
     }
 }
+function feature_forum_add_gallery_of_post_images_section() {
+
+    if (settings.get('forum-add-gallery-of-post-images-section')) {
+        const details_visibility = settings.get('forum-expand-gallery-of-post-images-section') ? "open" : "closed";
+
+        const posts = $('div.list_h > div.spot_h:visible');
+        const post_content_selector = 'div.big_post_main > div.big_post_content';
+        const attachment_links_selector = 'div.post_attaczments > div.obrazek_h_h > div.obrazek_name > a[href]';
+
+        const details_style = "style='margin: 25px 0px 0px 0px; font-size: 13px; border-block: 1px solid darkgrey;'"
+
+        posts.each(function() {
+            const attachments = $(this).find(attachment_links_selector).map(function() { return { href: this.href, alt: this.text }; }).get();
+
+            if (attachments?.length > 0) {
+                const images = attachments.map(function(attachment) { return `<div style="max-width: 50%; max-height: 200px;"><a href="${attachment.href}" title="${attachment.alt}" style="display: flex;" target="_blank rel="noreferrer nofollow"><img src="${attachment.href}" style="max-width: stretch; max-height: 198px; padding: 1px;" loading="lazy" referrerpolicy="no-referrer"></img></a></div>`; });
+
+                $(this).find(post_content_selector).append($(`
+<details ${details_visibility} class="post_text" ${details_style}>
+  <summary style="cursor: pointer; font-weight: bold;">Gallery of post images 🎥</summary>
+  <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-items: center;">
+    ${images.join("")}
+  </div>
+</details>`));
+            };
+        });
+    }
+}
+function feature_forum_add_list_of_post_links_section() {
+
+    if (settings.get('forum-add-list-of-post-links-section')) {
+        const details_visibility = settings.get('forum-expand-list-of-post-links-section') ? "open" : "closed";
+        const link_collator = new Intl.Collator(undefined, { sensitivity: 'base' }); // sort strings case-insensitively
+
+        const posts = $('div.list_h > div.spot_h:visible');
+        const post_content_selector = 'div.big_post_main > div.big_post_content';
+        const unquote_links_selector = 'div.post_text > div.post_text_c a.post_a[href]:not(div.quot a.post_a[href])';
+        const   quote_links_selector = 'div.post_text > div.post_text_c div.quot a.post_a[href]';
+
+        const li_style = "style='width: stretch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'"
+        const details_style = "style='margin: 25px 0px 0px 0px; font-size: 13px; border-block: 1px solid darkgrey;'"
+
+        posts.each(function() {
+            const unquote_links = $(this).find(unquote_links_selector).map(function() { return { href: this.href, alt: this.text, quote: false }; }).get();
+            const   quote_links = $(this).find(  quote_links_selector).map(function() { return { href: this.href, alt: this.text, quote: true  }; }).get();
+            const         links = [unquote_links, quote_links].flat(1).sort(function(a, b) {
+                return link_collator.compare(a.href, b.href);
+            });
+
+            if (links?.length > 0) {
+                const lis = links.map(function(link) { return `<li ${li_style}><a class="post_a" ${link.quote ? `style="color: ${forum_skin === 0 ? "#A8A8A8" : "#686868"}"` : ""} href="${link.href}" title="${link.alt}" target="_blank rel="noreferrer nofollow">${link.href}</a></li>`; });
+
+                $(this).find(post_content_selector).append($(`
+<details ${details_visibility} class="post_text" ${details_style}>
+  <summary style="cursor: pointer; font-weight: bold;">List of post links 📰</summary>
+  <div class="post_text post_text_c">
+    <ol type="1" style="list-style: inside decimal;">
+      ${lis.join('')}
+    </ol>
+  </div>
+</details>`));
+            };
+        });
+    }
+}
 
 function feature_main_page_move_compacted_news_section_to_the_top() {
 
@@ -6026,16 +6120,20 @@ function feature_main_page_move_compacted_news_section_to_the_top() {
             }
             // new frontpage version
             else if ($('news-section').length) {
-                $('news-section').insertBefore('big-spot-section');
+                $('news-section').insertBefore(':is(big-spot-section, big-spot-v2-section:nth-of-type(1))');
             }
+
 			style.appendTo(document.head);
 		} else {
+            // old frontpage version
             if ($('div:has(> div.news-section-wrapper)').length) {
                 $('div:has(> div.news-section-wrapper)').insertBefore('div.footer-spacer');
             }
+            // new frontpage version
             else if ($('news-section').length) {
                 $('news-section').insertBefore('explore-catalog');
             }
+
 			style.remove();
 		}
 	}
@@ -6057,14 +6155,14 @@ a.news-tile {
 news-section {
     margin: -25px 0 !important;
 }
-news-section > section-header > h2.section-header {
+news-section section-header > h2.section-header {
     padding-bottom: 0px !important;
 }
-news-section > slider-navigation > div.swiper-container {
+news-section slider-navigation > div.swiper-container {
     padding-top: 0px !important;
 }`);
 
-        setTimeout(settings.onchange.bind(settings, 'main-page-move-compacted-news-section-to-the-top', on_update), 1);
+        setTimeout(settings.onchange.bind(settings, 'main-page-move-compacted-news-section-to-the-top', on_update), 1000);
     }
 }
 
@@ -6080,7 +6178,7 @@ $(window).on('load', function() {
             }
             feature_BE_styles();
             feature_main_page_move_compacted_news_section_to_the_top()
-            feature_connect_autocheck();
+            //feature_connect_autocheck();
             feature_essentials_link();
             feature_favicon();
             feature_hide_menu_icons();
@@ -6096,7 +6194,7 @@ $(window).on('load', function() {
             feature_nav_display_updates();
             feature_nav_menu_links();
             feature_nav_notification_dot();
-            feature_paging_shortcut_keys();
+            //feature_paging_shortcut_keys();
             if (/^\/forum/.test(window.location.pathname)) {
                 feature_forum_old_gog_avatar();
                 feature_forum_add_open_new_group_topics_links("forum-main-page");
@@ -6132,6 +6230,8 @@ $(window).on('load', function() {
                     feature_forum_theme();
                     feature_hide_spoilers();
                     feature_forum_mark_new_users_posts();
+                    feature_forum_add_gallery_of_post_images_section();
+                    feature_forum_add_list_of_post_links_section();
                 }
                 if (location.pathname == '/forum/ajax/popUp') {
                     feature_post_preview();
